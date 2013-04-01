@@ -20,13 +20,20 @@ private slots:
     void onSvnPresent(const QString &versionString);
     void onSvnAbsent(const QString &errorString);
 
+private slots:
+    void onGetExternalsSucceeded(const QString &externalsString);
+    void onGetExternalsFailed(const QString &errorString);
+
 private:
     Ui::MainWidget *ui;
-    QSettings      settings;
+    QSettings      _settings;
+    QString        _packagesFolder;
+
 
 private:
     void checkSvnVersion();
     void getPackagesFolder();
+    void getExternals();
 };
 
 #endif // MAINWIDGET_H

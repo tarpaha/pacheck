@@ -4,11 +4,14 @@
 
 #include <QDebug>
 #include <QMessageBox>
+#include <QFileDialog>
+
+#define STRING_SLOT(slotName) SLOT(slotName(const QString&))
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MainWidget),
-    settings("tarpaha", "pacheck")
+    _settings("tarpaha", "pacheck")
 {
     ui->setupUi(this);
 
@@ -25,7 +28,7 @@ MainWidget::~MainWidget()
 
 void MainWidget::checkSvnVersion()
 {
-    Process::run(this, "svn --version --quiet", SLOT(onSvnPresent(const QString&)), SLOT(onSvnAbsent(const QString&)));
+    Process::run(this, "svn --version --quiet", STRING_SLOT(onSvnPresent), STRING_SLOT(onSvnAbsent));
 }
 
 void MainWidget::onSvnPresent(const QString& versionString)
@@ -55,5 +58,44 @@ void MainWidget::onSvnAbsent(const QString& errorString)
 
 void MainWidget::getPackagesFolder()
 {
-//    QString a = settings.value("packages_folder").toString();
+    _packagesFolder = _settings.value("packages_folder").toString();
+    if(_packagesFolder == 0)
+    {
+        _packagesFolder = QFileDialog::getExistingDirectory(
+                    this,
+                    "Select packages folder",
+                    _packagesFolder,
+                    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        _settings.setValue("packages_folder", _packagesFolder);
+    }
+    getExternals();
+}
+
+void MainWidget::getExternals()
+{
+    Process::run(
+                this,
+                QString("svn propget svn:externals %1").arg(_packagesFolder),
+                STRING_SLOT(onGetExternalsSucceeded),
+                STRING_SLOT(onGetExternalsFailed));
+}
+
+
+void MainWidget::onGetExternalsSucceeded(const QString &externalsString)
+{
+    if(externalsString == 0)
+    {
+        QMessageBox msgBox;
+        msgBox.setText(QString("Folder %1 do not contain external packages").arg(_packagesFolder));
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
+    }
+}
+
+void MainWidget::onGetExternalsFailed(const QString &errorString)
+{
+    QMessageBox msgBox;
+    msgBox.setText(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
 }
