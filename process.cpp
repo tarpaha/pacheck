@@ -10,6 +10,7 @@ Process::Process(QObject *parent, const QString &command, const char* onDone, co
     _command(command)
 {
     _process = new QProcess(this);
+    _process->setProcessChannelMode(QProcess::MergedChannels);
 
     QObject::connect(_process, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
     QObject::connect(_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
@@ -21,6 +22,7 @@ Process::Process(QObject *parent, const QString &command, const char* onDone, co
         QObject::connect(this, SIGNAL(processFailed(const QString&)), parent, onFail);
 
     _process->start(_command);
+    _process->waitForFinished();
 }
 
 void Process::processFinished(int exitCode)
@@ -28,7 +30,7 @@ void Process::processFinished(int exitCode)
     if(exitCode == 0)
         emit processSucceeded(_process->readAllStandardOutput());
     else
-        emit processFailed(_process->readAllStandardError());
+        emit processFailed(_process->readAllStandardOutput());
 }
 
 void Process::processError(QProcess::ProcessError error)
