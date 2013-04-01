@@ -7,16 +7,25 @@
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::MainWidget)
+    ui(new Ui::MainWidget),
+    settings("tarpaha", "pacheck")
 {
     ui->setupUi(this);
 
     checkSvnVersion();
 }
 
+MainWidget::~MainWidget()
+{
+    delete ui;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 void MainWidget::checkSvnVersion()
 {
-    Process::run(this, "svna --version --quiet", SLOT(onSvnPresent(const QString&)), SLOT(onSvnAbsent(const QString&)));
+    Process::run(this, "svn --version --quiet", SLOT(onSvnPresent(const QString&)), SLOT(onSvnAbsent(const QString&)));
 }
 
 void MainWidget::onSvnPresent(const QString& versionString)
@@ -25,6 +34,8 @@ void MainWidget::onSvnPresent(const QString& versionString)
 
     QStringList ver = versionString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
     ui->statusLabel->setText(QString("Using SVN ver. %1").arg(ver[0]));
+
+    getPackagesFolder();
 }
 
 void MainWidget::onSvnAbsent(const QString& errorString)
@@ -39,7 +50,10 @@ void MainWidget::onSvnAbsent(const QString& errorString)
     QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
 }
 
-MainWidget::~MainWidget()
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainWidget::getPackagesFolder()
 {
-    delete ui;
+//    QString a = settings.value("packages_folder").toString();
 }

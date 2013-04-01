@@ -2,6 +2,7 @@
 #define MAINWIDGET_H
 
 #include <QWidget>
+#include <QSettings>
 
 namespace Ui {
 class MainWidget;
@@ -21,9 +22,11 @@ private slots:
 
 private:
     Ui::MainWidget *ui;
+    QSettings      settings;
 
 private:
     void checkSvnVersion();
+    void getPackagesFolder();
 };
 
 #endif // MAINWIDGET_H
