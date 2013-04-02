@@ -143,14 +143,27 @@ class Package
 private:
     QString _name;
     QString _url;
+    QString _version;
 
 public:
     const QString& name() const { return _name; }
     const QString& url()  const { return _url; }
 
+    const QString& version()  const { return _version; }
+
 public:
-    Package(const QString& name, const QString& url) : _name(name), _url(url) {}
+    Package(const QString& name, const QString& url) : _name(name), _url(url)
+    {
+        parseUrl();
+    }
     operator QString() { return QString("name = %1, url = %2").arg(_name, _url); }
+
+    void parseUrl()
+    {
+        QStringList urlParts = _url.split(_name, QString::SkipEmptyParts, Qt::CaseInsensitive); // TODO: assertion, length must == 2
+        qDebug() << urlParts;
+        _version = urlParts[1];
+    }
 };
 
 QList<Package> packages;
@@ -165,12 +178,13 @@ void MainWidget::parsePackages(const QString& packagesString)
         packages.append(Package(parts[1], parts[0]));
     }
 
+    ui->table->clearContents();
     ui->table->setRowCount(packages.length());
     int row = 0;
     foreach(Package package, packages)
     {
         ui->table->setItem(row, 0, new QTableWidgetItem(package.name()));
-        ui->table->setItem(row, 1, new QTableWidgetItem(package.url()));
+        ui->table->setItem(row, 1, new QTableWidgetItem(package.version()));
         row++;
     }
 }
