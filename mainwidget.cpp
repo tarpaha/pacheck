@@ -38,8 +38,6 @@ void MainWidget::checkSvnVersion()
 
 void MainWidget::onSvnPresent(const QString& versionString)
 {
-    qDebug() << "SVN present: " << versionString;
-
     QStringList ver = versionString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
     ui->svnVersionLabel->setText(QString("svn %1").arg(ver[0]));
 
@@ -48,8 +46,6 @@ void MainWidget::onSvnPresent(const QString& versionString)
 
 void MainWidget::onSvnAbsent(const QString& errorString)
 {
-    qDebug() << "Error getting SVN version: " << errorString;
-
     QMessageBox msgBox;
     msgBox.setText(QString("Error running \"svn\" command.\nError string: %1").arg(errorString));
     msgBox.setStandardButtons(QMessageBox::Ok);
@@ -111,7 +107,7 @@ void DisplayErrorMessage(const QString& message)
     msgBox.exec();
 }
 
-void MainWidget::onGetExternalsSucceeded(const QString &externalsString)
+void MainWidget::onGetExternalsSucceeded(const QString& externalsString)
 {
     if(externalsString == 0)
     {
@@ -121,7 +117,7 @@ void MainWidget::onGetExternalsSucceeded(const QString &externalsString)
     else
     {
         _settings.setValue("packages_folder", _packagesFolder);
-        qDebug() << externalsString;
+        parsePackages(externalsString);
     }
     allowToChooseFolder();
 }
@@ -137,4 +133,44 @@ void MainWidget::allowToChooseFolder()
 {
     ui->statusLabel->setText("");
     ui->selectFolderButton->setEnabled(true);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Package
+{
+private:
+    QString _name;
+    QString _url;
+
+public:
+    const QString& name() const { return _name; }
+    const QString& url()  const { return _url; }
+
+public:
+    Package(const QString& name, const QString& url) : _name(name), _url(url) {}
+    operator QString() { return QString("name = %1, url = %2").arg(_name, _url); }
+};
+
+QList<Package> packages;
+
+void MainWidget::parsePackages(const QString& packagesString)
+{
+    QStringList packagesStrings = packagesString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+
+    foreach(QString packageString, packagesStrings)
+    {
+        QStringList parts = packageString.split(' ');
+        packages.append(Package(parts[1], parts[0]));
+    }
+
+    ui->table->setRowCount(packages.length());
+    int row = 0;
+    foreach(Package package, packages)
+    {
+        ui->table->setItem(row, 0, new QTableWidgetItem(package.name()));
+        ui->table->setItem(row, 1, new QTableWidgetItem(package.url()));
+        row++;
+    }
 }

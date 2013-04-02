@@ -38,6 +38,9 @@ private:
     void getPackagesFolder();
     void getExternals();
     void allowToChooseFolder();
+
+private:
+    void parsePackages(const QString &packagesString);
 };
 
 #endif // MAINWIDGET_H
