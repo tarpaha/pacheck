@@ -15,6 +15,8 @@ MainWidget::MainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->selectFolderButton->setEnabled(false);
+
     checkSvnVersion();
 }
 
@@ -28,7 +30,10 @@ MainWidget::~MainWidget()
 
 void MainWidget::checkSvnVersion()
 {
-    Process::run(this, "svn --version --quiet", STRING_SLOT(onSvnPresent), STRING_SLOT(onSvnAbsent));
+    ui->statusLabel->setText("checking SVN...");
+    Process::run(this,
+                 "svn --version --quiet",
+                 STRING_SLOT(onSvnPresent), STRING_SLOT(onSvnAbsent));
 }
 
 void MainWidget::onSvnPresent(const QString& versionString)
@@ -36,7 +41,7 @@ void MainWidget::onSvnPresent(const QString& versionString)
     qDebug() << "SVN present: " << versionString;
 
     QStringList ver = versionString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-    ui->statusLabel->setText(QString("Using SVN ver. %1").arg(ver[0]));
+    ui->svnVersionLabel->setText(QString("svn %1").arg(ver[0]));
 
     getPackagesFolder();
 }
@@ -58,21 +63,39 @@ void MainWidget::onSvnAbsent(const QString& errorString)
 
 void MainWidget::getPackagesFolder()
 {
-    _packagesFolder = _settings.value("packages_folder").toString();
-    if(_packagesFolder == 0)
+    _packagesFolder = _settings.value("packages_folder", "").toString();
+    if(_packagesFolder.length() > 0)
     {
-        _packagesFolder = QFileDialog::getExistingDirectory(
-                    this,
-                    "Select packages folder",
-                    _packagesFolder,
-                    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        _settings.setValue("packages_folder", _packagesFolder);
+        getExternals();
     }
-    getExternals();
+    else
+    {
+        allowToChooseFolder();
+    }
+}
+
+void MainWidget::showFolderSelectionDialog()
+{
+    ui->selectFolderButton->setEnabled(false);
+    ui->statusLabel->setText("selecting folder...");
+
+    _packagesFolder = QFileDialog::getExistingDirectory(
+                this,
+                "Select packages folder",
+                _packagesFolder,
+                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+    if(_packagesFolder != 0)
+        getExternals();
+    else
+        allowToChooseFolder();
 }
 
 void MainWidget::getExternals()
 {
+    ui->selectFolderButton->setEnabled(false);
+    ui->statusLabel->setText("getting externals...");
+
     Process::run(
                 this,
                 QString("svn propget svn:externals %1").arg(_packagesFolder),
@@ -80,22 +103,38 @@ void MainWidget::getExternals()
                 STRING_SLOT(onGetExternalsFailed));
 }
 
+void DisplayErrorMessage(const QString& message)
+{
+    QMessageBox msgBox;
+    msgBox.setText(message);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
+}
 
 void MainWidget::onGetExternalsSucceeded(const QString &externalsString)
 {
     if(externalsString == 0)
     {
-        QMessageBox msgBox;
-        msgBox.setText(QString("Folder %1 do not contain external packages").arg(_packagesFolder));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
+        DisplayErrorMessage(QString("Folder %1 do not contain external packages").arg(_packagesFolder));
+        _settings.setValue("packages_folder", "");
     }
+    else
+    {
+        _settings.setValue("packages_folder", _packagesFolder);
+        qDebug() << externalsString;
+    }
+    allowToChooseFolder();
 }
 
 void MainWidget::onGetExternalsFailed(const QString &errorString)
 {
-    QMessageBox msgBox;
-    msgBox.setText(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.exec();
+    DisplayErrorMessage(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
+    _settings.setValue("packages_folder", "");
+    allowToChooseFolder();
+}
+
+void MainWidget::allowToChooseFolder()
+{
+    ui->statusLabel->setText("");
+    ui->selectFolderButton->setEnabled(true);
 }

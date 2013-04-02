@@ -24,6 +24,9 @@ private slots:
     void onGetExternalsSucceeded(const QString &externalsString);
     void onGetExternalsFailed(const QString &errorString);
 
+public slots:
+    void showFolderSelectionDialog();
+
 private:
     Ui::MainWidget *ui;
     QSettings      _settings;
@@ -34,6 +37,7 @@ private:
     void checkSvnVersion();
     void getPackagesFolder();
     void getExternals();
+    void allowToChooseFolder();
 };
 
 #endif // MAINWIDGET_H

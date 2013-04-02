@@ -24,9 +24,9 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="selectFolderButton">
            <property name="text">
-            <string>PushButton</string>
+            <string>Select folder...</string>
            </property>
           </widget>
          </item>
@@ -42,14 +42,34 @@
       </layout>
      </item>
      <item>
-      <widget class="QLabel" name="statusLabel">
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="text">
-        <string>status</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="statusLayout">
+       <item>
+        <widget class="QLabel" name="statusLabel">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="text">
+          <string>status</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="svnVersionLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="text">
+          <string>10.10.10</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -57,5 +77,25 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>selectFolderButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWidget</receiver>
+   <slot>showFolderSelectionDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>28</x>
+     <y>255</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>showFolderSelectionDialog()</slot>
+ </slots>
 </ui>
