@@ -12,11 +12,14 @@ public:
     static void run(QObject* parent, const QString& command, const char *onDone, const char *onFail);
 
 private:
-    explicit Process(QObject* parent, const QString& command, const char *onDone, const char *onFail);
+    explicit Process(const QString& command, QObject* caller, const char *onDone, const char *onFail);
 
 private:
     QProcess*   _process;
     QString     _command;
+
+private slots:
+    void start();
 
 private slots:
     void processFinished(int exitCode);

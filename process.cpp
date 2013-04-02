@@ -1,12 +1,20 @@
 #include "process.h"
 
+#include <QThread>
+
 void Process::run(QObject *parent, const QString &command, const char* onDone, const char* onFail)
 {
-    new Process(parent, command, onDone, onFail);
+    Process* process = new Process(command, parent, onDone, onFail);
+    QThread* thread = new QThread(parent);
+
+    QObject::connect(thread, &QThread::started, process, &Process::start);
+    QObject::connect(thread, &QThread::finished, process, &Process::deleteLater);
+
+    process->moveToThread(thread);
+    thread->start();
 }
 
-Process::Process(QObject *parent, const QString &command, const char* onDone, const char* onFail) :
-    QObject(parent),
+Process::Process(const QString &command, QObject* caller, const char* onDone, const char* onFail) :
     _command(command)
 {
     _process = new QProcess(this);
@@ -15,14 +23,16 @@ Process::Process(QObject *parent, const QString &command, const char* onDone, co
     QObject::connect(_process, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
     QObject::connect(_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
 
-    if(onDone != 0)
-        QObject::connect(this, SIGNAL(processSucceeded(const QString&)), parent, onDone);
+    QObject::connect(this, SIGNAL(processSucceeded(const QString&)), caller, onDone);
+    QObject::connect(this, SIGNAL(processFailed(const QString&)), caller, onFail);
+}
 
-    if(onFail != 0)
-        QObject::connect(this, SIGNAL(processFailed(const QString&)), parent, onFail);
-
+void Process::start()
+{
     _process->start(_command);
     _process->waitForFinished();
+
+    QThread::currentThread()->quit();
 }
 
 void Process::processFinished(int exitCode)
