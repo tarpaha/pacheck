@@ -1,12 +1,13 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 #include "process.h"
+#include "package.h"
 
 #include <QDebug>
 #include <QMessageBox>
 #include <QFileDialog>
 
-#define STRING_SLOT(slotName) SLOT(slotName(const QString&))
+#define PROCESS_SLOT(slotName) SLOT(slotName(const QString&, const QString&))
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -33,10 +34,12 @@ void MainWidget::checkSvnVersion()
     ui->statusLabel->setText("checking SVN...");
     Process::run(this,
                  "svn --version --quiet",
-                 STRING_SLOT(onSvnPresent), STRING_SLOT(onSvnAbsent));
+                 0,
+                 PROCESS_SLOT(onSvnPresent),
+                 PROCESS_SLOT(onSvnAbsent));
 }
 
-void MainWidget::onSvnPresent(const QString& versionString)
+void MainWidget::onSvnPresent(const QString& versionString, const QString&)
 {
     QStringList ver = versionString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
     ui->svnVersionLabel->setText(QString("svn %1").arg(ver[0]));
@@ -44,7 +47,7 @@ void MainWidget::onSvnPresent(const QString& versionString)
     getPackagesFolder();
 }
 
-void MainWidget::onSvnAbsent(const QString& errorString)
+void MainWidget::onSvnAbsent(const QString& errorString, const QString&)
 {
     QMessageBox msgBox;
     msgBox.setText(QString("Error running \"svn\" command.\nError string: %1").arg(errorString));
@@ -95,8 +98,9 @@ void MainWidget::getExternals()
     Process::run(
                 this,
                 QString("svn propget svn:externals %1").arg(_packagesFolder),
-                STRING_SLOT(onGetExternalsSucceeded),
-                STRING_SLOT(onGetExternalsFailed));
+                0,
+                PROCESS_SLOT(onGetExternalsSucceeded),
+                PROCESS_SLOT(onGetExternalsFailed));
 }
 
 void DisplayErrorMessage(const QString& message)
@@ -107,7 +111,7 @@ void DisplayErrorMessage(const QString& message)
     msgBox.exec();
 }
 
-void MainWidget::onGetExternalsSucceeded(const QString& externalsString)
+void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const QString&)
 {
     if(externalsString == 0)
     {
@@ -122,7 +126,7 @@ void MainWidget::onGetExternalsSucceeded(const QString& externalsString)
     allowToChooseFolder();
 }
 
-void MainWidget::onGetExternalsFailed(const QString &errorString)
+void MainWidget::onGetExternalsFailed(const QString &errorString, const QString&)
 {
     DisplayErrorMessage(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
     _settings.setValue("packages_folder", "");
@@ -138,35 +142,7 @@ void MainWidget::allowToChooseFolder()
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-class Package
-{
-private:
-    QString _name;
-    QString _url;
-    QString _version;
-
-public:
-    const QString& name() const { return _name; }
-    const QString& url()  const { return _url; }
-
-    const QString& version()  const { return _version; }
-
-public:
-    Package(const QString& name, const QString& url) : _name(name), _url(url)
-    {
-        parseUrl();
-    }
-    operator QString() { return QString("name = %1, url = %2").arg(_name, _url); }
-
-    void parseUrl()
-    {
-        QStringList urlParts = _url.split(_name, QString::SkipEmptyParts, Qt::CaseInsensitive); // TODO: assertion, length must == 2
-        qDebug() << urlParts;
-        _version = urlParts[1];
-    }
-};
-
-QList<Package> packages;
+QList<Package*> packages;
 
 void MainWidget::parsePackages(const QString& packagesString)
 {
@@ -175,16 +151,20 @@ void MainWidget::parsePackages(const QString& packagesString)
     foreach(QString packageString, packagesStrings)
     {
         QStringList parts = packageString.split(' ');
-        packages.append(Package(parts[1], parts[0]));
+        packages.append(new Package(this, parts[1], parts[0]));
+        break;
     }
 
     ui->table->clearContents();
     ui->table->setRowCount(packages.length());
     int row = 0;
-    foreach(Package package, packages)
+    foreach(Package* package, packages)
     {
-        ui->table->setItem(row, 0, new QTableWidgetItem(package.name()));
-        ui->table->setItem(row, 1, new QTableWidgetItem(package.version()));
+        ui->table->setItem(row, 0, new QTableWidgetItem(package->name()));
+        ui->table->setItem(row, 1, new QTableWidgetItem(package->version()));
         row++;
     }
+
+    foreach(Package* package, packages)
+        package->getVersions();
 }

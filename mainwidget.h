@@ -17,12 +17,12 @@ public:
     ~MainWidget();
 
 private slots:
-    void onSvnPresent(const QString &versionString);
-    void onSvnAbsent(const QString &errorString);
+    void onSvnPresent(const QString &versionString, const QString&);
+    void onSvnAbsent(const QString &errorString, const QString&);
 
 private slots:
-    void onGetExternalsSucceeded(const QString &externalsString);
-    void onGetExternalsFailed(const QString &errorString);
+    void onGetExternalsSucceeded(const QString &externalsString, const QString&);
+    void onGetExternalsFailed(const QString &errorString, const QString&);
 
 public slots:
     void showFolderSelectionDialog();

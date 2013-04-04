@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwidget.cpp \
-    process.cpp
+    process.cpp \
+    package.cpp
 
 HEADERS  += mainwidget.h \
-    process.h
+    process.h \
+    package.h
 
 FORMS    += mainwidget.ui

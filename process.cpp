@@ -2,9 +2,9 @@
 
 #include <QThread>
 
-void Process::run(QObject *parent, const QString &command, const char* onDone, const char* onFail)
+void Process::run(QObject *parent, const QString &command, const QString& data, const char* onDone, const char* onFail)
 {
-    Process* process = new Process(command, parent, onDone, onFail);
+    Process* process = new Process(command, parent, data, onDone, onFail);
     QThread* thread = new QThread(parent);
 
     QObject::connect(thread, &QThread::started, process, &Process::start);
@@ -14,8 +14,9 @@ void Process::run(QObject *parent, const QString &command, const char* onDone, c
     thread->start();
 }
 
-Process::Process(const QString &command, QObject* caller, const char* onDone, const char* onFail) :
-    _command(command)
+Process::Process(const QString &command, QObject* caller, const QString &data, const char* onDone, const char* onFail) :
+    _command(command),
+    _data(data)
 {
     _process = new QProcess(this);
     _process->setProcessChannelMode(QProcess::MergedChannels);
@@ -23,8 +24,8 @@ Process::Process(const QString &command, QObject* caller, const char* onDone, co
     QObject::connect(_process, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
     QObject::connect(_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
 
-    QObject::connect(this, SIGNAL(processSucceeded(const QString&)), caller, onDone);
-    QObject::connect(this, SIGNAL(processFailed(const QString&)), caller, onFail);
+    QObject::connect(this, SIGNAL(processSucceeded(const QString&, const QString&)), caller, onDone);
+    QObject::connect(this, SIGNAL(processFailed(const QString&, const QString&)), caller, onFail);
 }
 
 void Process::start()
@@ -38,9 +39,9 @@ void Process::start()
 void Process::processFinished(int exitCode)
 {
     if(exitCode == 0)
-        emit processSucceeded(_process->readAllStandardOutput());
+        emit processSucceeded(_process->readAllStandardOutput(), _data);
     else
-        emit processFailed(_process->readAllStandardOutput());
+        emit processFailed(_process->readAllStandardOutput(), _data);
 }
 
 void Process::processError(QProcess::ProcessError error)
@@ -58,5 +59,5 @@ void Process::processError(QProcess::ProcessError error)
         errorString += "unknown";
     }
 
-    emit processFailed(errorString);
+    emit processFailed(errorString, _data);
 }

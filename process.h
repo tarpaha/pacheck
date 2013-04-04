@@ -9,14 +9,15 @@ class Process : public QObject
     Q_OBJECT
 
 public:
-    static void run(QObject* parent, const QString& command, const char *onDone, const char *onFail);
+    static void run(QObject* parent, const QString& command, const QString& data, const char *onDone, const char *onFail);
 
 private:
-    explicit Process(const QString& command, QObject* caller, const char *onDone, const char *onFail);
+    explicit Process(const QString& command, QObject* caller, const QString& data, const char *onDone, const char *onFail);
 
 private:
     QProcess*   _process;
     QString     _command;
+    QString     _data;
 
 private slots:
     void start();
@@ -25,8 +26,8 @@ private slots:
     void processFinished(int exitCode);
     void processError(QProcess::ProcessError error);
 signals:
-    void processSucceeded(const QString&);
-    void processFailed(const QString&);
+    void processSucceeded(const QString&, const QString&);
+    void processFailed(const QString&, const QString&);
 };
 
 #endif // PROCESS_H
