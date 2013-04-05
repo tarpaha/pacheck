@@ -13,19 +13,19 @@ class MainWidget : public QWidget
     Q_OBJECT
     
 public:
-    explicit MainWidget(QWidget *parent = 0);
+    explicit MainWidget(QWidget* parent = 0);
     ~MainWidget();
 
 protected:
     virtual void closeEvent(QCloseEvent* event);
 
 private slots:
-    void onSvnPresent(const QString &versionString, const QVariant &);
-    void onSvnAbsent(const QString &errorString, const QVariant&);
+    void onSvnPresent(const QString& versionString, const QVariant&);
+    void onSvnAbsent(const QString& errorString, const QVariant&);
 
 private slots:
-    void onGetExternalsSucceeded(const QString &externalsString, const QVariant&);
-    void onGetExternalsFailed(const QString &errorString, const QVariant &);
+    void onGetExternalsSucceeded(const QString& externalsString, const QVariant&);
+    void onGetExternalsFailed(const QString& errorString, const QVariant&);
 
 public slots:
     void showFolderSelectionDialog();
@@ -43,7 +43,7 @@ private:
     void allowToChooseFolder();
 
 private:
-    void parsePackages(const QString &packagesString);
+    void parsePackages(const QString& packagesString);
 
 private:
     // implemented in mainwidget_settings.cpp

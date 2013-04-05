@@ -7,7 +7,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-MainWidget::MainWidget(QWidget *parent) :
+MainWidget::MainWidget(QWidget* parent) :
     QWidget(parent),
     ui(new Ui::MainWidget),
     _settings("tarpaha", "pacheck")
@@ -117,7 +117,7 @@ void DisplayErrorMessage(const QString& message)
     msgBox.exec();
 }
 
-void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const QVariant &)
+void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const QVariant&)
 {
     if(externalsString == 0)
     {
@@ -132,7 +132,7 @@ void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const Q
     allowToChooseFolder();
 }
 
-void MainWidget::onGetExternalsFailed(const QString &errorString, const QVariant&)
+void MainWidget::onGetExternalsFailed(const QString& errorString, const QVariant&)
 {
     DisplayErrorMessage(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
     _settings.setValue("packages_folder", "");
