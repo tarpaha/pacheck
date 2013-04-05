@@ -16,6 +16,9 @@ public:
     explicit MainWidget(QWidget *parent = 0);
     ~MainWidget();
 
+protected:
+    virtual void closeEvent(QCloseEvent* event);
+
 private slots:
     void onSvnPresent(const QString &versionString, const QVariant &);
     void onSvnAbsent(const QString &errorString, const QVariant&);
@@ -41,6 +44,11 @@ private:
 
 private:
     void parsePackages(const QString &packagesString);
+
+private:
+    // implemented in mainwidget_settings.cpp
+    void readSettings();
+    void writeSettings();
 };
 
 #endif // MAINWIDGET_H

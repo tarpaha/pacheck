@@ -16,7 +16,8 @@ SOURCES += main.cpp\
         mainwidget.cpp \
     process.cpp \
     package.cpp \
-    svnutils.cpp
+    svnutils.cpp \
+    mainwidget_settings.cpp
 
 HEADERS  += mainwidget.h \
     process.h \

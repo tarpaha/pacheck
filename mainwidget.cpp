@@ -14,6 +14,8 @@ MainWidget::MainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    readSettings();
+
     ui->selectFolderButton->setEnabled(false);
 
     checkSvnVersion();
@@ -22,6 +24,12 @@ MainWidget::MainWidget(QWidget *parent) :
 MainWidget::~MainWidget()
 {
     delete ui;
+}
+
+void MainWidget::closeEvent(QCloseEvent* event)
+{
+    writeSettings();
+    QWidget::closeEvent(event);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
