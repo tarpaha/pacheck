@@ -1,9 +1,13 @@
 #include "process.h"
 
 #include <QThread>
+#include <QDebug>
 
 void Process::run(QObject *parent, const QString &command, const QString& data, const char* onDone, const char* onFail)
 {
+    qDebug() << command;
+
+
     Process* process = new Process(command, parent, data, onDone, onFail);
     QThread* thread = new QThread(parent);
 

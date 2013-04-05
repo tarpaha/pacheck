@@ -148,20 +148,28 @@ void MainWidget::parsePackages(const QString& packagesString)
 {
     QStringList packagesStrings = packagesString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
+    //int t = 2;
     foreach(QString packageString, packagesStrings)
     {
         QStringList parts = packageString.split(' ');
-        packages.append(new Package(this, parts[1], parts[0]));
-        break;
+
+        //if(parts[1].toLower().compare("tapjoy") != 0)
+        //    continue;
+
+        packages.append(new Package(this, parts[0]));
+
+//        if(--t <= 0)
+  //          break;
     }
 
     ui->table->clearContents();
     ui->table->setRowCount(packages.length());
+
     int row = 0;
     foreach(Package* package, packages)
     {
-        ui->table->setItem(row, 0, new QTableWidgetItem(package->name()));
-        ui->table->setItem(row, 1, new QTableWidgetItem(package->version()));
+        ui->table->setCellWidget(row, 0, package->getNameWidget());// new QTableWidgetItem(package->name()));
+        ui->table->setCellWidget(row, 1, package->getVersionsWidget());// new QTableWidgetItem(package->version()));
         row++;
     }
 

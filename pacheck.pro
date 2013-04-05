@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwidget.cpp \
     process.cpp \
-    package.cpp
+    package.cpp \
+    svnutils.cpp
 
 HEADERS  += mainwidget.h \
     process.h \
-    package.h
+    package.h \
+    svnutils.h
 
 FORMS    += mainwidget.ui
