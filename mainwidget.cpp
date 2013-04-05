@@ -132,7 +132,7 @@ void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const Q
     allowToChooseFolder();
 }
 
-void MainWidget::onGetExternalsFailed(const QString& errorString, const QVariant&)
+void MainWidget::onGetExternalsFailed(const QString&, const QVariant&)
 {
     DisplayErrorMessage(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
     _settings.setPackagesFolder("");
