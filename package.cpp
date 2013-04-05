@@ -51,8 +51,6 @@ void Package::onGetBaseFoldersSucceeded(const QString& data, const QVariant&)
 
     foreach(QString baseFolder, baseFolders)
     {
-        qDebug() << baseFolder;
-
         if(baseFolder == "trunk")
         {
             addVersion("trunk");
