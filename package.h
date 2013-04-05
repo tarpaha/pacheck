@@ -54,6 +54,9 @@ private:
 private slots:
     void onGetBaseFoldersSucceeded(const QString& data, const QVariant&);
     void onGetFolderContentSucceeded(const QString &data, const QVariant&);
+
+public:
+    static bool lessThan(Package *p1, Package *p2);
 };
 
 #endif // PACKAGE_H

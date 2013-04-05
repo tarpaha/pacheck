@@ -18,7 +18,7 @@ Package::Package(QWidget* parent, const QString& url) :
     _currentVersion = parts[2];
 
     _nameWidget = new QLabel(parent);
-    _nameWidget->setText(_name);
+    _nameWidget->setText(" " + _name);
 
     _versionsControlWidget = new QStackedWidget(parent);
 
@@ -99,3 +99,9 @@ void Package::addVersion(const QString &version)
 {
     _versions.append(version);
 }
+
+bool Package::lessThan(Package* p1, Package* p2)
+{
+    return p1->_name.compare(p2->_name) < 0;
+}
+
