@@ -3,11 +3,8 @@
 #include <QThread>
 #include <QDebug>
 
-void Process::run(QObject *parent, const QString &command, const QString& data, const char* onDone, const char* onFail)
+void Process::run(QObject *parent, const QString &command, const QVariant& data, const char* onDone, const char* onFail)
 {
-    qDebug() << command;
-
-
     Process* process = new Process(command, parent, data, onDone, onFail);
     QThread* thread = new QThread(parent);
 
@@ -18,7 +15,7 @@ void Process::run(QObject *parent, const QString &command, const QString& data, 
     thread->start();
 }
 
-Process::Process(const QString &command, QObject* caller, const QString &data, const char* onDone, const char* onFail) :
+Process::Process(const QString &command, QObject* caller, const QVariant &data, const char* onDone, const char* onFail) :
     _command(command),
     _data(data)
 {
@@ -28,8 +25,8 @@ Process::Process(const QString &command, QObject* caller, const QString &data, c
     QObject::connect(_process, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
     QObject::connect(_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
 
-    QObject::connect(this, SIGNAL(processSucceeded(const QString&, const QString&)), caller, onDone);
-    QObject::connect(this, SIGNAL(processFailed(const QString&, const QString&)), caller, onFail);
+    QObject::connect(this, PROCESS_SIGNAL(processSucceeded), caller, onDone);
+    QObject::connect(this, PROCESS_SIGNAL(processFailed), caller, onFail);
 }
 
 void Process::start()

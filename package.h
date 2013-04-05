@@ -45,8 +45,8 @@ private:
     QComboBox*      _versionsWidget;
 
 private slots:
-    void onGetBaseFoldersSucceeded(const QString& data, const QString&);
-    void onGetFolderContentSucceeded(const QString &data, const QString&);
+    void onGetBaseFoldersSucceeded(const QString& data, const QVariant&);
+    void onGetFolderContentSucceeded(const QString &data, const QVariant&);
 };
 
 #endif // PACKAGE_H

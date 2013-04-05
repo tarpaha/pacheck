@@ -40,10 +40,10 @@ Package::operator QString()
 
 void Package::getVersions()
 {
-    Process::run(this, "svn list " + _path, 0, SLOT(onGetBaseFoldersSucceeded(const QString&, const QString&)), 0);
+    Process::run(this, "svn list " + _path, 0, PROCESS_SLOT(onGetBaseFoldersSucceeded), 0);
 }
 
-void Package::onGetBaseFoldersSucceeded(const QString& data, const QString&)
+void Package::onGetBaseFoldersSucceeded(const QString& data, const QVariant&)
 {
     QStringList baseFolders = data.split(QRegExp("[\r\n/]"), QString::SkipEmptyParts);
 
@@ -66,16 +66,16 @@ void Package::onGetBaseFoldersSucceeded(const QString& data, const QString&)
     {
         if(baseFolder == "trunk")
             continue;
-        Process::run(this, "svn list " + _path + "/" + baseFolder, baseFolder, SLOT(onGetFolderContentSucceeded(const QString&, const QString&)), 0);
+        Process::run(this, "svn list " + _path + "/" + baseFolder, baseFolder, PROCESS_SLOT(onGetFolderContentSucceeded), 0);
     }
 }
 
-void Package::onGetFolderContentSucceeded(const QString& str, const QString& data)
+void Package::onGetFolderContentSucceeded(const QString& str, const QVariant &data)
 {
     QStringList versions = str.split(QRegExp("[\r\n/]"), QString::SkipEmptyParts);
     foreach(QString version, versions)
     {
-        addVersion(data + "/" + version);
+        addVersion(data.toString() + "/" + version);
     }
 
     if(--_folderContentCallsLeft <= 0)
@@ -85,5 +85,4 @@ void Package::onGetFolderContentSucceeded(const QString& str, const QString& dat
 void Package::addVersion(const QString &version)
 {
     _versionsWidget->addItem(version);
-    //qDebug() << version;
 }

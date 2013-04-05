@@ -7,8 +7,6 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#define PROCESS_SLOT(slotName) SLOT(slotName(const QString&, const QString&))
-
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MainWidget),
@@ -39,7 +37,7 @@ void MainWidget::checkSvnVersion()
                  PROCESS_SLOT(onSvnAbsent));
 }
 
-void MainWidget::onSvnPresent(const QString& versionString, const QString&)
+void MainWidget::onSvnPresent(const QString& versionString, const QVariant&)
 {
     QStringList ver = versionString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
     ui->svnVersionLabel->setText(QString("svn %1").arg(ver[0]));
@@ -47,7 +45,7 @@ void MainWidget::onSvnPresent(const QString& versionString, const QString&)
     getPackagesFolder();
 }
 
-void MainWidget::onSvnAbsent(const QString& errorString, const QString&)
+void MainWidget::onSvnAbsent(const QString& errorString, const QVariant &)
 {
     QMessageBox msgBox;
     msgBox.setText(QString("Error running \"svn\" command.\nError string: %1").arg(errorString));
@@ -111,7 +109,7 @@ void DisplayErrorMessage(const QString& message)
     msgBox.exec();
 }
 
-void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const QString&)
+void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const QVariant &)
 {
     if(externalsString == 0)
     {
@@ -126,7 +124,7 @@ void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const Q
     allowToChooseFolder();
 }
 
-void MainWidget::onGetExternalsFailed(const QString &errorString, const QString&)
+void MainWidget::onGetExternalsFailed(const QString &errorString, const QVariant&)
 {
     DisplayErrorMessage(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
     _settings.setValue("packages_folder", "");
