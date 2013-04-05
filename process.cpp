@@ -3,7 +3,7 @@
 #include <QThread>
 #include <QDebug>
 
-static const int MAX_SIMULTANEOUS_PROCESSES = 4;
+static const int MAX_SIMULTANEOUS_PROCESSES = 8;
 QSemaphore Process::_semaphore(MAX_SIMULTANEOUS_PROCESSES);
 
 void Process::run(QObject *parent, const QString &command, const QVariant& data, const char* onDone, const char* onFail)
