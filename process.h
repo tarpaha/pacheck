@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QProcess>
 #include <QVariant>
+#include <QSemaphore>
 
-// slot and function definition for process slot/signal
 #define PROCESS_SIGNAL(slotName) SIGNAL(slotName(const QString&, const QVariant&))
 #define PROCESS_SLOT(slotName) SLOT(slotName(const QString&, const QVariant&))
 
@@ -18,6 +18,9 @@ public:
 
 private:
     explicit Process(const QString& command, QObject* caller, const QVariant& data, const char *onDone, const char *onFail);
+
+private:
+    static QSemaphore _semaphore;
 
 private:
     QProcess*   _process;

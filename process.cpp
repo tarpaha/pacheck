@@ -3,6 +3,10 @@
 #include <QThread>
 #include <QDebug>
 
+static const int MAX_SIMULTANEOUS_PROCESSES = 4;
+
+QSemaphore Process::_semaphore(MAX_SIMULTANEOUS_PROCESSES);
+
 void Process::run(QObject *parent, const QString &command, const QVariant& data, const char* onDone, const char* onFail)
 {
     Process* process = new Process(command, parent, data, onDone, onFail);
@@ -25,16 +29,23 @@ Process::Process(const QString &command, QObject* caller, const QVariant &data, 
     QObject::connect(_process, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
     QObject::connect(_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
 
-    QObject::connect(this, PROCESS_SIGNAL(processSucceeded), caller, onDone);
-    QObject::connect(this, PROCESS_SIGNAL(processFailed), caller, onFail);
+    if(onDone != 0)
+        QObject::connect(this, PROCESS_SIGNAL(processSucceeded), caller, onDone);
+
+    if(onFail != 0)
+        QObject::connect(this, PROCESS_SIGNAL(processFailed), caller, onFail);
 }
 
 void Process::start()
 {
+    _semaphore.acquire();
+
     _process->start(_command);
     _process->waitForFinished();
 
     QThread::currentThread()->quit();
+
+    _semaphore.release();
 }
 
 void Process::processFinished(int exitCode)
