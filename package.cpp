@@ -13,9 +13,9 @@ Package::Package(QWidget* parent, const QString& url) :
 {
     QStringList parts = SvnUtils::divideSvnPath(url);
 
-    _path    = parts[0];
-    _name    = parts[1];
-    _version = parts[2];
+    _basePath       = parts[0];
+    _name           = parts[1];
+    _currentVersion = parts[2];
 
     _nameWidget = new QLabel(parent);
     _nameWidget->setText(_name);
@@ -35,12 +35,12 @@ Package::Package(QWidget* parent, const QString& url) :
 
 Package::operator QString()
 {
-    return QString("name = %1, path = %2, version = %3").arg(_name, _path, _version);
+    return QString("name = %1, path = %2, version = %3").arg(_name, _basePath, _currentVersion);
 }
 
 void Package::getVersions()
 {
-    Process::run(this, "svn list " + _path, 0, PROCESS_SLOT(onGetBaseFoldersSucceeded), 0);
+    Process::run(this, "svn list " + _basePath, 0, PROCESS_SLOT(onGetBaseFoldersSucceeded), 0);
 }
 
 void Package::onGetBaseFoldersSucceeded(const QString& data, const QVariant&)
@@ -64,7 +64,7 @@ void Package::onGetBaseFoldersSucceeded(const QString& data, const QVariant&)
     {
         if(baseFolder == "trunk")
             continue;
-        Process::run(this, "svn list " + _path + "/" + baseFolder, baseFolder, PROCESS_SLOT(onGetFolderContentSucceeded), 0);
+        Process::run(this, "svn list " + _basePath + "/" + baseFolder, baseFolder, PROCESS_SLOT(onGetFolderContentSucceeded), 0);
     }
 }
 
@@ -73,11 +73,25 @@ void Package::onGetFolderContentSucceeded(const QString& str, const QVariant &da
     QStringList versions = str.split(QRegExp("[\r\n/]"), QString::SkipEmptyParts);
     foreach(QString version, versions)
     {
-        addVersion(data.toString() + "/" + version);
+        _versions.append(data.toString() + "/" + version);
     }
 
     if(--_folderContentCallsLeft <= 0)
-        _versionsControlWidget->setCurrentWidget(_versionsWidget);
+    {
+        showVersions();
+    }
+}
+
+void Package::showVersions()
+{
+    _versions.sort();
+
+    _versionsWidget->clear();
+    _versionsWidget->addItems(_versions);
+
+    _versionsWidget->setCurrentText(_currentVersion);
+
+    _versionsControlWidget->setCurrentWidget(_versionsWidget);
 }
 
 void Package::addVersion(const QString &version)

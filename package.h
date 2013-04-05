@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QStackedWidget>
 #include <QComboBox>
+#include <QStringList>
 
 class Package : public QObject
 {
@@ -16,7 +17,7 @@ public:
 
 public:
     const QString& name() const { return _name; }
-    const QString& version()  const { return _version; }
+    const QString& version()  const { return _currentVersion; }
 
 public:
     QWidget* getNameWidget()       { return _nameWidget; }
@@ -33,8 +34,8 @@ private:
 
 private:
     QString _name;
-    QString _path;
-    QString _version;
+    QString _basePath;
+    QString _currentVersion;
 
 private:
     int _folderContentCallsLeft;
@@ -43,6 +44,12 @@ private:
     QLabel*         _nameWidget;
     QStackedWidget* _versionsControlWidget;
     QComboBox*      _versionsWidget;
+
+private:
+    QStringList     _versions;
+
+private:
+    void showVersions();
 
 private slots:
     void onGetBaseFoldersSucceeded(const QString& data, const QVariant&);
