@@ -47,6 +47,7 @@ void Package::onGetBaseFoldersSucceeded(const QString& data, const QVariant&)
 {
     QStringList baseFolders = data.split(QRegExp("[\r\n/]"), QString::SkipEmptyParts);
 
+    _versions.clear();
     _folderContentCallsLeft = 0;
 
     foreach(QString baseFolder, baseFolders)
@@ -73,7 +74,7 @@ void Package::onGetFolderContentSucceeded(const QString& str, const QVariant &da
     QStringList versions = str.split(QRegExp("[\r\n/]"), QString::SkipEmptyParts);
     foreach(QString version, versions)
     {
-        _versions.append(data.toString() + "/" + version);
+        addVersion(data.toString() + "/" + version);
     }
 
     if(--_folderContentCallsLeft <= 0)
@@ -96,5 +97,5 @@ void Package::showVersions()
 
 void Package::addVersion(const QString &version)
 {
-    _versionsWidget->addItem(version);
+    _versions.append(version);
 }
