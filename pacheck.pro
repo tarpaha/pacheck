@@ -17,11 +17,12 @@ SOURCES += main.cpp\
     process.cpp \
     package.cpp \
     svnutils.cpp \
-    mainwidget_settings.cpp
+    settings.cpp
 
 HEADERS  += mainwidget.h \
     process.h \
     package.h \
-    svnutils.h
+    svnutils.h \
+    settings.h
 
 FORMS    += mainwidget.ui

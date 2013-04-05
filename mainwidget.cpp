@@ -2,6 +2,7 @@
 #include "ui_mainwidget.h"
 #include "process.h"
 #include "package.h"
+#include "settings.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -10,11 +11,10 @@
 MainWidget::MainWidget(QWidget* parent) :
     QWidget(parent),
     ui(new Ui::MainWidget),
-    _settings("tarpaha", "pacheck")
+    _settings(this)
 {
     ui->setupUi(this);
-
-    readSettings();
+    _settings.loadUI();
 
     ui->selectFolderButton->setEnabled(false);
 
@@ -28,7 +28,7 @@ MainWidget::~MainWidget()
 
 void MainWidget::closeEvent(QCloseEvent* event)
 {
-    writeSettings();
+    _settings.saveUI();
     QWidget::closeEvent(event);
 }
 
@@ -68,7 +68,7 @@ void MainWidget::onSvnAbsent(const QString& errorString, const QVariant &)
 
 void MainWidget::getPackagesFolder()
 {
-    _packagesFolder = _settings.value("packages_folder", "").toString();
+    _packagesFolder = _settings.getPackagesFolder();
     if(_packagesFolder.length() > 0)
     {
         getExternals();
@@ -122,11 +122,11 @@ void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const Q
     if(externalsString == 0)
     {
         DisplayErrorMessage(QString("Folder %1 do not contain external packages").arg(_packagesFolder));
-        _settings.setValue("packages_folder", "");
+        _settings.setPackagesFolder("");
     }
     else
     {
-        _settings.setValue("packages_folder", _packagesFolder);
+        _settings.setPackagesFolder(_packagesFolder);
         parsePackages(externalsString);
     }
     allowToChooseFolder();
@@ -135,7 +135,7 @@ void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const Q
 void MainWidget::onGetExternalsFailed(const QString& errorString, const QVariant&)
 {
     DisplayErrorMessage(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
-    _settings.setValue("packages_folder", "");
+    _settings.setPackagesFolder("");
     allowToChooseFolder();
 }
 

@@ -1,8 +1,9 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
+#include "settings.h"
+
 #include <QWidget>
-#include <QSettings>
 
 namespace Ui {
 class MainWidget;
@@ -11,6 +12,8 @@ class MainWidget;
 class MainWidget : public QWidget
 {
     Q_OBJECT
+
+    friend class Settings;
     
 public:
     explicit MainWidget(QWidget* parent = 0);
@@ -31,9 +34,9 @@ public slots:
     void showFolderSelectionDialog();
 
 private:
-    Ui::MainWidget *ui;
-    QSettings      _settings;
-    QString        _packagesFolder;
+    Ui::MainWidget* ui;
+    Settings        _settings;
+    QString         _packagesFolder;
 
 
 private:
@@ -44,11 +47,6 @@ private:
 
 private:
     void parsePackages(const QString& packagesString);
-
-private:
-    // implemented in mainwidget_settings.cpp
-    void readSettings();
-    void writeSettings();
 };
 
 #endif // MAINWIDGET_H
