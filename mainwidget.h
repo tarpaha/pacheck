@@ -17,6 +17,7 @@ class MainWidget : public QWidget
 
     friend class Settings;
     friend class State_SvnCheck;
+    friend class State_GetPackagesFolder;
     
 public:
     explicit MainWidget(QWidget* parent = 0);
@@ -27,11 +28,19 @@ protected:
 
 private:
     State*  _currentState;
+    void (MainWidget::* _onStateSucceeded)();
+    void (MainWidget::* _onStateFailed)();
 private:
-    void setState(State *state);
+    void setState(State *state, void (MainWidget::* onSucceeded)(), void (MainWidget::* onFailed)());
 private slots:
-    void onStateSucceded();
-    void onStateFailed();
+    void onStateCompleted();
+
+private slots:
+    void onSvnPresent();
+    void onSvnAbsent();
+
+private slots:
+    void onFolderSelected();
 
 private slots:
     void onGetExternalsSucceeded(const QString& externalsString, const QVariant&);

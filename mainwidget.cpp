@@ -22,7 +22,7 @@ MainWidget::MainWidget(QWidget* parent) :
 
     ui->selectFolderButton->setEnabled(false);
 
-    setState(new State_SvnCheck(this));
+    setState(new State_SvnCheck(this), &MainWidget::onSvnPresent, &MainWidget::onSvnAbsent);
 }
 
 MainWidget::~MainWidget()
@@ -39,22 +39,33 @@ void MainWidget::closeEvent(QCloseEvent* event)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MainWidget::setState(State* state)
+void MainWidget::setState(State* state, void (MainWidget::* onSucceeded)(), void (MainWidget::* onFailed)())
 {
     _currentState = state;
 
-    QObject::connect(_currentState, &State::succeeded, this, &MainWidget::onStateSucceded);
-    QObject::connect(_currentState, &State::failed, this, &MainWidget::onStateFailed);
+    QObject::connect(_currentState, &State::succeeded, this, onSucceeded);
+    QObject::connect(_currentState, &State::succeeded, this, &MainWidget::onStateCompleted);
+
+    QObject::connect(_currentState, &State::failed, this, onFailed);
+    QObject::connect(_currentState, &State::failed, this, &MainWidget::onStateCompleted);
 
     _currentState->start();
 }
 
-void MainWidget::onStateSucceded()
+void MainWidget::onStateCompleted()
+{
+    QObject::disconnect(_currentState, 0, this, 0);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainWidget::onSvnPresent()
 {
     getPackagesFolder();
 }
 
-void MainWidget::onStateFailed()
+void MainWidget::onSvnAbsent()
 {
     QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
 }
@@ -64,18 +75,18 @@ void MainWidget::onStateFailed()
 
 void MainWidget::getPackagesFolder()
 {
-    //setState(new State_GetPackagesFolder(this));
-
-    _packagesFolder = _settings.getPackagesFolder();
-    if(_packagesFolder.length() > 0)
-    {
-        getExternals();
-    }
-    else
-    {
-        allowToChooseFolder();
-    }
+    //_settings.setPackagesFolder(0);
+    setState(new State_GetPackagesFolder(this), &MainWidget::onFolderSelected, 0);
 }
+
+void MainWidget::onFolderSelected()
+{
+    getExternals();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 void MainWidget::showFolderSelectionDialog()
 {

@@ -11,6 +11,12 @@ public:
 
 public:
     virtual void start();
+
+private:
+    QString _packagesFolder;
+
+private:
+    void allowToChooseFolder();
 };
 
 #endif // GETPACKAGESFOLDERSTATE_H
