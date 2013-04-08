@@ -122,20 +122,18 @@ void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const Q
     if(externalsString == 0)
     {
         DisplayErrorMessage(QString("Folder %1 do not contain external packages").arg(_packagesFolder));
-        _settings.setPackagesFolder("");
+        allowToChooseFolder();
     }
     else
     {
         _settings.setPackagesFolder(_packagesFolder);
         parsePackages(externalsString);
     }
-    allowToChooseFolder();
 }
 
 void MainWidget::onGetExternalsFailed(const QString&, const QVariant&)
 {
     DisplayErrorMessage(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
-    _settings.setPackagesFolder("");
     allowToChooseFolder();
 }
 
@@ -149,6 +147,7 @@ void MainWidget::allowToChooseFolder()
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 QList<Package*> packages;
+int packagesCounter;
 
 void MainWidget::parsePackages(const QString& packagesString)
 {
@@ -174,6 +173,27 @@ void MainWidget::parsePackages(const QString& packagesString)
         row++;
     }
 
-    foreach(Package* package, packages)
-        package->getVersions();
+    getVersions();
 }
+
+void MainWidget::getVersions()
+{
+    packagesCounter = packages.length();
+
+    ui->statusLabel->setText("getting versions...");
+    foreach(Package* package, packages)
+        package->getVersions(this, SLOT(onVersionsReceived()));
+}
+
+
+void MainWidget::onVersionsReceived()
+{
+    if(--packagesCounter <= 0)
+        allowToChooseFolder();
+}
+
+
+
+
+
+

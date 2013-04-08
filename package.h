@@ -24,7 +24,7 @@ public:
     QWidget* getVersionsWidget()   { return _versionsControlWidget; }
 
 public:
-    void getVersions();
+    void getVersions(QObject *sender, const char* onVesionsReceived);
 
 public:
     operator QString();
@@ -44,6 +44,9 @@ private:
     QLabel*         _nameWidget;
     QStackedWidget* _versionsControlWidget;
     QComboBox*      _versionsWidget;
+
+signals:
+    void versionsReceived();
 
 private:
     QStringList     _versions;

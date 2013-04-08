@@ -44,6 +44,10 @@ private:
     void getPackagesFolder();
     void getExternals();
     void allowToChooseFolder();
+    void getVersions();
+
+private slots:
+    void onVersionsReceived();
 
 private:
     void parsePackages(const QString& packagesString);

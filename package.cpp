@@ -38,8 +38,9 @@ Package::operator QString()
     return QString("name = %1, path = %2, version = %3").arg(_name, _basePath, _currentVersion);
 }
 
-void Package::getVersions()
+void Package::getVersions(QObject* sender, const char* onVersionsReceived)
 {
+    QObject::connect(this, SIGNAL(versionsReceived()), sender, onVersionsReceived);
     Process::run(this, "svn list " + _basePath, 0, PROCESS_SLOT(onGetBaseFoldersSucceeded), 0);
 }
 
@@ -93,6 +94,8 @@ void Package::showVersions()
     _versionsWidget->setCurrentText(_currentVersion);
 
     _versionsControlWidget->setCurrentWidget(_versionsWidget);
+
+    emit versionsReceived();
 }
 
 void Package::addVersion(const QString &version)
