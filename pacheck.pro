@@ -17,12 +17,20 @@ SOURCES += main.cpp\
     process.cpp \
     package.cpp \
     svnutils.cpp \
-    settings.cpp
+    settings.cpp \
+    state.cpp \
+    state_widget.cpp \
+    state_svncheck.cpp \
+    state_getpackagesfolder.cpp
 
 HEADERS  += mainwidget.h \
     process.h \
     package.h \
     svnutils.h \
-    settings.h
+    settings.h \
+    state.h \
+    state_widget.h \
+    state_svncheck.h \
+    state_getpackagesfolder.h
 
 FORMS    += mainwidget.ui

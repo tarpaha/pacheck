@@ -9,11 +9,14 @@ namespace Ui {
 class MainWidget;
 }
 
+class State;
+
 class MainWidget : public QWidget
 {
     Q_OBJECT
 
     friend class Settings;
+    friend class State_SvnCheck;
     
 public:
     explicit MainWidget(QWidget* parent = 0);
@@ -22,9 +25,13 @@ public:
 protected:
     virtual void closeEvent(QCloseEvent* event);
 
+private:
+    State*  _currentState;
+private:
+    void setState(State *state);
 private slots:
-    void onSvnPresent(const QString& versionString, const QVariant&);
-    void onSvnAbsent(const QString& errorString, const QVariant&);
+    void onStateSucceded();
+    void onStateFailed();
 
 private slots:
     void onGetExternalsSucceeded(const QString& externalsString, const QVariant&);
@@ -40,7 +47,6 @@ private:
 
 
 private:
-    void checkSvnVersion();
     void getPackagesFolder();
     void getExternals();
     void allowToChooseFolder();

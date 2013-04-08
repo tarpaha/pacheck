@@ -4,6 +4,10 @@
 #include "package.h"
 #include "settings.h"
 
+#include "state.h"
+#include "state_svncheck.h"
+#include "state_getpackagesfolder.h"
+
 #include <QDebug>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -18,7 +22,7 @@ MainWidget::MainWidget(QWidget* parent) :
 
     ui->selectFolderButton->setEnabled(false);
 
-    checkSvnVersion();
+    setState(new State_SvnCheck(this));
 }
 
 MainWidget::~MainWidget()
@@ -35,31 +39,23 @@ void MainWidget::closeEvent(QCloseEvent* event)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MainWidget::checkSvnVersion()
+void MainWidget::setState(State* state)
 {
-    ui->statusLabel->setText("checking SVN...");
-    Process::run(this,
-                 "svn --version --quiet",
-                 0,
-                 PROCESS_SLOT(onSvnPresent),
-                 PROCESS_SLOT(onSvnAbsent));
+    _currentState = state;
+
+    QObject::connect(_currentState, &State::succeeded, this, &MainWidget::onStateSucceded);
+    QObject::connect(_currentState, &State::failed, this, &MainWidget::onStateFailed);
+
+    _currentState->start();
 }
 
-void MainWidget::onSvnPresent(const QString& versionString, const QVariant&)
+void MainWidget::onStateSucceded()
 {
-    QStringList ver = versionString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-    ui->svnVersionLabel->setText(QString("svn %1").arg(ver[0]));
-
     getPackagesFolder();
 }
 
-void MainWidget::onSvnAbsent(const QString& errorString, const QVariant &)
+void MainWidget::onStateFailed()
 {
-    QMessageBox msgBox;
-    msgBox.setText(QString("Error running \"svn\" command.\nError string: %1").arg(errorString));
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.exec();
-
     QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
 }
 
@@ -68,6 +64,8 @@ void MainWidget::onSvnAbsent(const QString& errorString, const QVariant &)
 
 void MainWidget::getPackagesFolder()
 {
+    //setState(new State_GetPackagesFolder(this));
+
     _packagesFolder = _settings.getPackagesFolder();
     if(_packagesFolder.length() > 0)
     {
