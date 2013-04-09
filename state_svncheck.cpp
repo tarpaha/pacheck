@@ -12,7 +12,6 @@ State_SvnCheck::State_SvnCheck(MainWidget* widget) :
 
 void State_SvnCheck::start()
 {
-    _widget->ui->statusLabel->setText("checking SVN...");
     Process::run(this,
                  "svn --version --quiet",
                  0,
@@ -25,7 +24,7 @@ void State_SvnCheck::onSvnPresent(const QString& versionString, const QVariant&)
     QStringList ver = versionString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
     _widget->ui->svnVersionLabel->setText(QString("svn %1").arg(ver[0]));
 
-    emit succeeded();
+    succeed();
 }
 
 void State_SvnCheck::onSvnAbsent(const QString& errorString, const QVariant &)
@@ -35,5 +34,5 @@ void State_SvnCheck::onSvnAbsent(const QString& errorString, const QVariant &)
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
 
-    emit failed();
+    fail();
 }

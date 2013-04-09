@@ -32,8 +32,6 @@ private:
     void (MainWidget::* _onStateFailed)();
 private:
     void setState(State *state, void (MainWidget::* onSucceeded)(), void (MainWidget::* onFailed)());
-private slots:
-    void onStateCompleted();
 
 private slots:
     void onSvnPresent();
@@ -43,22 +41,18 @@ private slots:
     void onFolderSelected();
 
 private slots:
-    void onGetExternalsSucceeded(const QString& externalsString, const QVariant&);
-    void onGetExternalsFailed(const QString& errorString, const QVariant&);
-
-public slots:
-    void showFolderSelectionDialog();
+    //void onGetExternalsSucceeded(const QString& externalsString, const QVariant&);
+    //void onGetExternalsFailed(const QString& errorString, const QVariant&);
 
 private:
     Ui::MainWidget* ui;
     Settings        _settings;
     QString         _packagesFolder;
 
-
+/*
 private:
     void getPackagesFolder();
     void getExternals();
-    void allowToChooseFolder();
     void getVersions();
 
 private slots:
@@ -66,6 +60,7 @@ private slots:
 
 private:
     void parsePackages(const QString& packagesString);
+    */
 };
 
 #endif // MAINWIDGET_H

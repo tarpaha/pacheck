@@ -10,13 +10,20 @@ public:
     explicit State_GetPackagesFolder(MainWidget* widget);
 
 public:
+    const QString& packagesFolder() const { return _packagesFolder; }
+
+public:
     virtual void start();
 
 private:
     QString _packagesFolder;
 
 private:
-    void allowToChooseFolder();
+    void enableFolderSelection(bool enabled);
+    void processPackagesFolder();
+
+private slots:
+    void showSelectionDialog();
 };
 
 #endif // GETPACKAGESFOLDERSTATE_H

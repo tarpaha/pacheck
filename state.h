@@ -9,12 +9,16 @@ class State : public QObject
 public:
     explicit State(QObject *parent = 0);
 
+public:
+    virtual void start() = 0;
+
+protected:
+    void succeed();
+    void fail();
+
 signals:
     void succeeded();
     void failed();
-
-public:
-    virtual void start() = 0;
 };
 
 #endif // STATE_H

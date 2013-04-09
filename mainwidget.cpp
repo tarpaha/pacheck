@@ -44,17 +44,9 @@ void MainWidget::setState(State* state, void (MainWidget::* onSucceeded)(), void
     _currentState = state;
 
     QObject::connect(_currentState, &State::succeeded, this, onSucceeded);
-    QObject::connect(_currentState, &State::succeeded, this, &MainWidget::onStateCompleted);
-
     QObject::connect(_currentState, &State::failed, this, onFailed);
-    QObject::connect(_currentState, &State::failed, this, &MainWidget::onStateCompleted);
 
     _currentState->start();
-}
-
-void MainWidget::onStateCompleted()
-{
-    QObject::disconnect(_currentState, 0, this, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +54,7 @@ void MainWidget::onStateCompleted()
 
 void MainWidget::onSvnPresent()
 {
-    getPackagesFolder();
+    setState(new State_GetPackagesFolder(this), &MainWidget::onFolderSelected, 0);
 }
 
 void MainWidget::onSvnAbsent()
@@ -73,38 +65,16 @@ void MainWidget::onSvnAbsent()
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MainWidget::getPackagesFolder()
-{
-    //_settings.setPackagesFolder(0);
-    setState(new State_GetPackagesFolder(this), &MainWidget::onFolderSelected, 0);
-}
-
 void MainWidget::onFolderSelected()
 {
-    getExternals();
+    qDebug() << static_cast<State_GetPackagesFolder*>(_currentState)->packagesFolder();
+    //getExternals();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-void MainWidget::showFolderSelectionDialog()
-{
-    ui->selectFolderButton->setEnabled(false);
-    ui->statusLabel->setText("selecting folder...");
-
-    _packagesFolder = QFileDialog::getExistingDirectory(
-                this,
-                "Select packages folder",
-                _packagesFolder,
-                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-
-    if(_packagesFolder != 0)
-        getExternals();
-    else
-        allowToChooseFolder();
-}
-
+/*
 void MainWidget::getExternals()
 {
     ui->selectFolderButton->setEnabled(false);
@@ -144,12 +114,6 @@ void MainWidget::onGetExternalsFailed(const QString&, const QVariant&)
 {
     DisplayErrorMessage(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
     allowToChooseFolder();
-}
-
-void MainWidget::allowToChooseFolder()
-{
-    ui->statusLabel->setText("");
-    ui->selectFolderButton->setEnabled(true);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -200,7 +164,7 @@ void MainWidget::onVersionsReceived()
     if(--packagesCounter <= 0)
         allowToChooseFolder();
 }
-
+*/
 
 
 
