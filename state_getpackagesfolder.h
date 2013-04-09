@@ -7,7 +7,7 @@ class State_GetPackagesFolder : public State_Widget
 {
     Q_OBJECT
 public:
-    explicit State_GetPackagesFolder(MainWidget* widget);
+    explicit State_GetPackagesFolder(MainWidget* widget, const QString &packagesFolder);
 
 public:
     const QString& packagesFolder() const { return _packagesFolder; }

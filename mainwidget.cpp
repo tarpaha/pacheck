@@ -7,6 +7,7 @@
 #include "state.h"
 #include "state_svncheck.h"
 #include "state_getpackagesfolder.h"
+#include "state_getpackageslist.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -54,7 +55,8 @@ void MainWidget::setState(State* state, void (MainWidget::* onSucceeded)(), void
 
 void MainWidget::onSvnPresent()
 {
-    setState(new State_GetPackagesFolder(this), &MainWidget::onFolderSelected, 0);
+    _packagesFolder = _settings.getPackagesFolder();
+    setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
 }
 
 void MainWidget::onSvnAbsent()
@@ -67,58 +69,24 @@ void MainWidget::onSvnAbsent()
 
 void MainWidget::onFolderSelected()
 {
-    qDebug() << static_cast<State_GetPackagesFolder*>(_currentState)->packagesFolder();
-    //getExternals();
+    _packagesFolder = static_cast<State_GetPackagesFolder*>(_currentState)->packagesFolder();
+    setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
+}
+
+void MainWidget::OnPackagesListReceived()
+{
+    qDebug() << "received";
+}
+
+void MainWidget::OnPackagesListFailed()
+{
+    //setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
-void MainWidget::getExternals()
-{
-    ui->selectFolderButton->setEnabled(false);
-    ui->statusLabel->setText("getting externals...");
-
-    Process::run(
-                this,
-                QString("svn propget svn:externals %1").arg(_packagesFolder),
-                0,
-                PROCESS_SLOT(onGetExternalsSucceeded),
-                PROCESS_SLOT(onGetExternalsFailed));
-}
-
-void DisplayErrorMessage(const QString& message)
-{
-    QMessageBox msgBox;
-    msgBox.setText(message);
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.exec();
-}
-
-void MainWidget::onGetExternalsSucceeded(const QString& externalsString, const QVariant&)
-{
-    if(externalsString == 0)
-    {
-        DisplayErrorMessage(QString("Folder %1 do not contain external packages").arg(_packagesFolder));
-        allowToChooseFolder();
-    }
-    else
-    {
-        _settings.setPackagesFolder(_packagesFolder);
-        parsePackages(externalsString);
-    }
-}
-
-void MainWidget::onGetExternalsFailed(const QString&, const QVariant&)
-{
-    DisplayErrorMessage(QString("Folder %1 do not controlled by SVN").arg(_packagesFolder));
-    allowToChooseFolder();
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
 QList<Package*> packages;
 int packagesCounter;
 

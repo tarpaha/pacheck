@@ -38,11 +38,11 @@ private slots:
     void onSvnAbsent();
 
 private slots:
-    void onFolderSelected();
+    void OnPackagesListReceived();
+    void OnPackagesListFailed();
 
 private slots:
-    //void onGetExternalsSucceeded(const QString& externalsString, const QVariant&);
-    //void onGetExternalsFailed(const QString& errorString, const QVariant&);
+    void onFolderSelected();
 
 private:
     Ui::MainWidget* ui;
@@ -52,7 +52,6 @@ private:
 /*
 private:
     void getPackagesFolder();
-    void getExternals();
     void getVersions();
 
 private slots:

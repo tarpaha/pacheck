@@ -4,14 +4,14 @@
 
 #include <QFileDialog>
 
-State_GetPackagesFolder::State_GetPackagesFolder(MainWidget *widget) :
-    State_Widget(widget)
+State_GetPackagesFolder::State_GetPackagesFolder(MainWidget *widget, const QString& packagesFolder) :
+    State_Widget(widget),
+    _packagesFolder(packagesFolder)
 {
 }
 
 void State_GetPackagesFolder::start()
 {
-    _packagesFolder = _widget->_settings.getPackagesFolder();
     processPackagesFolder();
 }
 
