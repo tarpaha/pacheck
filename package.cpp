@@ -11,7 +11,7 @@
 Package::Package(QWidget* parent, const QString& url) :
     QObject(parent)
 {
-    QStringList parts = SvnUtils::divideSvnPath(url);
+    QStringList parts = SvnUtils::splitSvnPath(url);
 
     _basePath       = parts[0];
     _name           = parts[1];

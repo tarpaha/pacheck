@@ -3,7 +3,7 @@
 static const char* TRUNK = "trunk";
 static const char* SEPARATOR = "/";
 
-QStringList SvnUtils::divideSvnPath(const QString &path)
+QStringList SvnUtils::splitSvnPath(const QString &path)
 {
     QStringList parts = path.split(SEPARATOR);
 
@@ -11,6 +11,20 @@ QStringList SvnUtils::divideSvnPath(const QString &path)
         return processSvnPath(parts, 1);
 
     return processSvnPath(parts, 2);
+}
+
+QStringList SvnUtils::splitPackagesList(const QString &packagesList)
+{
+    QStringList packageLines = packagesList.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+
+    QStringList result;
+    foreach(QString packageLine, packageLines)
+    {
+        QStringList parts = packageLine.split(' ');
+        result.append(parts[0]);
+    }
+
+    return result;
 }
 
 QStringList SvnUtils::processSvnPath(const QStringList& parts, const int deep)

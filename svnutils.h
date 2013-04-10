@@ -7,7 +7,8 @@
 class SvnUtils
 {
 public:
-    static QStringList divideSvnPath(const QString& path);
+    static QStringList splitSvnPath(const QString& path);
+    static QStringList splitPackagesList(const QString& packagesList);
 
 private:
     static QStringList processSvnPath(const QStringList& parts, const int deep);

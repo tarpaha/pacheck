@@ -4,10 +4,12 @@
 #include "package.h"
 #include "settings.h"
 
+#include "svnutils.h"
 #include "state.h"
 #include "state_svncheck.h"
 #include "state_getpackagesfolder.h"
 #include "state_getpackageslist.h"
+#include "state_getversions.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -84,71 +86,52 @@ void MainWidget::onFolderSelected()
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MainWidget::OnPackagesListReceived()
-{
-    _settings.setPackagesFolder(_packagesFolder);
-
-    const QString& packagesList = static_cast<State_GetPackagesList*>(_currentState)->packagesList();
-    qDebug() << packagesList;
-}
-
 void MainWidget::OnPackagesListFailed()
 {
     setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-/*
-QList<Package*> packages;
-int packagesCounter;
-
-void MainWidget::parsePackages(const QString& packagesString)
+void MainWidget::OnPackagesListReceived()
 {
-    QStringList packagesStrings = packagesString.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+    _settings.setPackagesFolder(_packagesFolder);
 
-    packages.clear();
-    foreach(QString packageString, packagesStrings)
+    const QString& packagesListString = static_cast<State_GetPackagesList*>(_currentState)->packagesList();
+
+    fillPackagesList(SvnUtils::splitPackagesList(packagesListString));
+    applyPackagesToTable();
+
+    setState(new State_GetVersions(this, _packages), &MainWidget::onVersionsReceived, 0);
+}
+
+void MainWidget::fillPackagesList(const QStringList& packagesList)
+{
+    _packages.clear();
+    foreach(QString packageUrl, packagesList)
     {
-        QStringList parts = packageString.split(' ');
-        packages.append(new Package(this, parts[0]));
+        _packages.append(new Package(this, packageUrl));
     }
+    qSort(_packages.begin(), _packages.end(), Package::lessThan);
+}
 
-    qSort(packages.begin(), packages.end(), Package::lessThan);
-
+void MainWidget::applyPackagesToTable()
+{
     ui->table->clearContents();
-    ui->table->setRowCount(packages.length());
+    ui->table->setRowCount(_packages.length());
 
     int row = 0;
-    foreach(Package* package, packages)
+    foreach(Package* package, _packages)
     {
         ui->table->setCellWidget(row, 0, package->getNameWidget());
         ui->table->setCellWidget(row, 1, package->getVersionsWidget());
         row++;
     }
-
-    getVersions();
 }
 
-void MainWidget::getVersions()
-{
-    packagesCounter = packages.length();
 
-    ui->statusLabel->setText("getting versions...");
-    foreach(Package* package, packages)
-        package->getVersions(this, SLOT(onVersionsReceived()));
-}
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MainWidget::onVersionsReceived()
 {
-    if(--packagesCounter <= 0)
-        allowToChooseFolder();
+    setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
 }
-*/
-
-
-
-
-

@@ -10,6 +10,7 @@ class MainWidget;
 }
 
 class State;
+class Package;
 
 class MainWidget : public QWidget
 {
@@ -28,8 +29,6 @@ protected:
 
 private:
     State*  _currentState;
-    void (MainWidget::* _onStateSucceeded)();
-    void (MainWidget::* _onStateFailed)();
 private:
     void setState(State *state, void (MainWidget::* onSucceeded)(), void (MainWidget::* onFailed)());
 
@@ -43,23 +42,19 @@ private slots:
 
 private slots:
     void onFolderSelected();
-
 private:
-    Ui::MainWidget* ui;
-    Settings        _settings;
-    QString         _packagesFolder;
-
-/*
-private:
-    void getPackagesFolder();
-    void getVersions();
+    void fillPackagesList(const QStringList& packagesList);
+    void applyPackagesToTable();
 
 private slots:
     void onVersionsReceived();
 
 private:
-    void parsePackages(const QString& packagesString);
-    */
+    Ui::MainWidget* ui;
+    Settings        _settings;
+    QString         _packagesFolder;
+    QList<Package*> _packages;
+
 };
 
 #endif // MAINWIDGET_H
