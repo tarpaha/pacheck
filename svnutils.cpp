@@ -29,7 +29,10 @@ QStringList SvnUtils::splitPackagesList(const QString &packagesList)
 
 QString SvnUtils::getLatestBranch(const QStringList& versions)
 {
-    return versions.filter(QRegExp("^branches/[0-9_]+$")).last();
+    QStringList digitalBranches = versions.filter(QRegExp("^branches/[0-9_]+$"));
+    if(!digitalBranches.isEmpty())
+        return digitalBranches.last();
+    return 0;
 }
 
 QStringList SvnUtils::processSvnPath(const QStringList& parts, const int deep)

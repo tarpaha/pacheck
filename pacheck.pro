@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     state_svncheck.cpp \
     state_getpackagesfolder.cpp \
     state_getpackageslist.cpp \
-    state_getversions.cpp
+    state_getversions.cpp \
+    utils.cpp
 
 HEADERS  += mainwidget.h \
     process.h \
@@ -35,6 +36,7 @@ HEADERS  += mainwidget.h \
     state_svncheck.h \
     state_getpackagesfolder.h \
     state_getpackageslist.h \
-    state_getversions.h
+    state_getversions.h \
+    utils.h
 
 FORMS    += mainwidget.ui

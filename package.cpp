@@ -1,12 +1,19 @@
 #include "package.h"
 #include "process.h"
 #include "svnutils.h"
+#include "utils.h"
 
 #include <QStringList>
 #include <QDebug>
 #include <QLabel>
 #include <QComboBox>
 #include <QDir>
+
+// colors from
+// http://www.w3schools.com/cssref/css_colornames.asp
+static const char* COLOR_PROGRESS = "Lavender";
+static const char* COLOR_GOOD     = "PaleGreen";
+static const char* COLOR_BAD      = "LightSalmon";
 
 Package::Package(QWidget* parent, const QString& url) :
     QObject(parent)
@@ -20,16 +27,16 @@ Package::Package(QWidget* parent, const QString& url) :
     _nameWidget = new QLabel(parent);
     _nameWidget->setText(" " + _name);
 
-    _nameWidget->setStyleSheet("QLabel { background-color: Lavender; }");
+    _nameWidget->setStyleSheet(Utils::bcStyleSheet(_nameWidget, COLOR_PROGRESS));
 
     _versionsControlWidget = new QStackedWidget(parent);
 
     QLabel* progressLabel = new QLabel(parent);
     progressLabel->setText("  loading ...");
-    progressLabel->setStyleSheet("QLabel { background-color: Lavender; }");
+    progressLabel->setStyleSheet(Utils::bcStyleSheet(progressLabel, COLOR_PROGRESS));
 
     _versionsWidget = new QComboBox(parent);
-    _versionsWidget->setStyleSheet("QComboBox { background-color: Lavender; }");
+    _versionsWidget->setStyleSheet(Utils::bcStyleSheet(_versionsWidget, COLOR_PROGRESS));
     _versionsWidget->setFrame(false);
 
     _versionsControlWidget->addWidget(_versionsWidget);
@@ -98,15 +105,18 @@ void Package::showVersions()
 
     _versionsWidget->setCurrentText(_currentVersion);
 
-    QString latestBranch = SvnUtils::getLatestBranch(_versions);
-    if(_currentVersion == latestBranch)
+    const QString latestBranch = SvnUtils::getLatestBranch(_versions);
+    if((latestBranch != 0) && (latestBranch == _currentVersion))
     {
-        _nameWidget->setStyleSheet("QLabel { background-color: GreenYellow; }");
-        _versionsWidget->setStyleSheet("QComboBox { background-color: GreenYellow; }");
+        _nameWidget->setStyleSheet(Utils::bcStyleSheet(_nameWidget, COLOR_GOOD));
+        _versionsWidget->setStyleSheet(Utils::bcStyleSheet(_versionsWidget, COLOR_GOOD));
     }
     else
     {
-        _versionsWidget->setItemData(_versions.indexOf(_currentVersion), QColor("Lavender"), Qt::BackgroundColorRole);
+        _nameWidget->setStyleSheet(Utils::bcStyleSheet(_nameWidget, COLOR_BAD));
+        _versionsWidget->setStyleSheet(Utils::bcStyleSheet(_versionsWidget, COLOR_BAD));
+
+        _versionsWidget->setItemData(_versions.indexOf(_currentVersion), QColor("MistyRose"), Qt::BackgroundColorRole);
         _versionsWidget->setItemData(_versions.indexOf(latestBranch), QColor("GreenYellow"), Qt::BackgroundColorRole);
     }
 

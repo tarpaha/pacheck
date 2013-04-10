@@ -100,6 +100,8 @@ void MainWidget::OnPackagesListReceived()
     fillPackagesList(SvnUtils::splitPackagesList(packagesListString));
     applyPackagesToTable();
 
+    setWindowTitle(_packagesFolder);
+
     setState(new State_GetVersions(this, _packages), &MainWidget::onVersionsReceived, 0);
 }
 
