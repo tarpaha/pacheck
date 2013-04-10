@@ -15,8 +15,13 @@ public:
 private:
     const QString _packagesFolder;
 
+public:
+    const QString& packagesList() const { return _packagesList; }
+private:
+    QString _packagesList;
+
 private slots:
-    void onPropGetSucceeded(const QString& externalsString, const QVariant&);
+    void onPropGetSucceeded(const QString& packagesListString, const QVariant&);
     void onPropGetFailed(const QString& errorString, const QVariant&);
 };
 

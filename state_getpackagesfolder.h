@@ -20,7 +20,6 @@ private:
 
 private:
     void enableFolderSelection(bool enabled);
-    void processPackagesFolder();
 
 private slots:
     void showSelectionDialog();

@@ -19,7 +19,8 @@ MainWidget::MainWidget(QWidget* parent) :
     _settings(this)
 {
     ui->setupUi(this);
-    _settings.loadUI();
+
+    _settings.loadUI();    
 
     ui->selectFolderButton->setEnabled(false);
 
@@ -56,7 +57,14 @@ void MainWidget::setState(State* state, void (MainWidget::* onSucceeded)(), void
 void MainWidget::onSvnPresent()
 {
     _packagesFolder = _settings.getPackagesFolder();
-    setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
+    if(_packagesFolder != 0)
+    {
+        setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
+    }
+    else
+    {
+        setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
+    }
 }
 
 void MainWidget::onSvnAbsent()
@@ -73,14 +81,20 @@ void MainWidget::onFolderSelected()
     setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 void MainWidget::OnPackagesListReceived()
 {
-    qDebug() << "received";
+    _settings.setPackagesFolder(_packagesFolder);
+
+    const QString& packagesList = static_cast<State_GetPackagesList*>(_currentState)->packagesList();
+    qDebug() << packagesList;
 }
 
 void MainWidget::OnPackagesListFailed()
 {
-    //setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
+    setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

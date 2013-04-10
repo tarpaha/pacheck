@@ -12,20 +12,7 @@ State_GetPackagesFolder::State_GetPackagesFolder(MainWidget *widget, const QStri
 
 void State_GetPackagesFolder::start()
 {
-    processPackagesFolder();
-}
-
-void State_GetPackagesFolder::processPackagesFolder()
-{
-    if(_packagesFolder.length() > 0)
-    {
-        enableFolderSelection(false);
-        succeed();
-    }
-    else
-    {
-        enableFolderSelection(true);
-    }
+    enableFolderSelection(true);
 }
 
 void State_GetPackagesFolder::enableFolderSelection(bool enabled)
@@ -49,5 +36,10 @@ void State_GetPackagesFolder::showSelectionDialog()
                 "Select packages folder",
                 _packagesFolder,
                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    processPackagesFolder();
+
+    if(_packagesFolder != 0)
+    {
+        enableFolderSelection(false);
+        succeed();
+    }
 }

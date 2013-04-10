@@ -28,15 +28,16 @@ void DisplayErrorMessage(const QString& message)
     msgBox.exec();
 }
 
-void State_GetPackagesList::onPropGetSucceeded(const QString& externalsString, const QVariant&)
+void State_GetPackagesList::onPropGetSucceeded(const QString& packagesListString, const QVariant&)
 {
-    if(externalsString == 0)
+    if(packagesListString == 0)
     {
         DisplayErrorMessage(QString("Folder %1 do not contain external packages").arg(_packagesFolder));
         fail();
     }
     else
     {
+        _packagesList = packagesListString;
         succeed();
     }
 }
