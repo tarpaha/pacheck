@@ -98,10 +98,16 @@ void Package::showVersions()
 
     _versionsWidget->setCurrentText(_currentVersion);
 
-    if(SvnUtils::isLatestBranch(_versions, _currentVersion))
+    QString latestBranch = SvnUtils::getLatestBranch(_versions);
+    if(_currentVersion == latestBranch)
     {
         _nameWidget->setStyleSheet("QLabel { background-color: GreenYellow; }");
         _versionsWidget->setStyleSheet("QComboBox { background-color: GreenYellow; }");
+    }
+    else
+    {
+        _versionsWidget->setItemData(_versions.indexOf(_currentVersion), QColor("Lavender"), Qt::BackgroundColorRole);
+        _versionsWidget->setItemData(_versions.indexOf(latestBranch), QColor("GreenYellow"), Qt::BackgroundColorRole);
     }
 
     _versionsControlWidget->setCurrentWidget(_versionsWidget);

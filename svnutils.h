@@ -9,7 +9,7 @@ class SvnUtils
 public:
     static QStringList splitSvnPath(const QString& path);
     static QStringList splitPackagesList(const QString& packagesList);
-    static bool isLatestBranch(const QStringList& versions, const QString& checkedVersion);
+    static QString getLatestBranch(const QStringList& versions);
 
 private:
     static QStringList processSvnPath(const QStringList& parts, const int deep);
