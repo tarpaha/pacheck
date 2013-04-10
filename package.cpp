@@ -20,12 +20,17 @@ Package::Package(QWidget* parent, const QString& url) :
     _nameWidget = new QLabel(parent);
     _nameWidget->setText(" " + _name);
 
+    _nameWidget->setStyleSheet("QLabel { background-color: Lavender; }");
+
     _versionsControlWidget = new QStackedWidget(parent);
 
     QLabel* progressLabel = new QLabel(parent);
     progressLabel->setText("  loading ...");
+    progressLabel->setStyleSheet("QLabel { background-color: Lavender; }");
 
     _versionsWidget = new QComboBox(parent);
+    _versionsWidget->setStyleSheet("QComboBox { background-color: Lavender; }");
+    _versionsWidget->setFrame(false);
 
     _versionsControlWidget->addWidget(_versionsWidget);
     _versionsControlWidget->addWidget(progressLabel);
@@ -92,6 +97,12 @@ void Package::showVersions()
     _versionsWidget->addItems(_versions);
 
     _versionsWidget->setCurrentText(_currentVersion);
+
+    if(SvnUtils::isLatestBranch(_versions, _currentVersion))
+    {
+        _nameWidget->setStyleSheet("QLabel { background-color: GreenYellow; }");
+        _versionsWidget->setStyleSheet("QComboBox { background-color: GreenYellow; }");
+    }
 
     _versionsControlWidget->setCurrentWidget(_versionsWidget);
 

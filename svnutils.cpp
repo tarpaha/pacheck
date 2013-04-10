@@ -27,6 +27,16 @@ QStringList SvnUtils::splitPackagesList(const QString &packagesList)
     return result;
 }
 
+bool SvnUtils::isLatestBranch(const QStringList& versions, const QString& checkedVersion)
+{
+    if(!checkedVersion.startsWith("branches/"))
+        return false;
+
+    QStringList branches = versions.filter(QRegExp("^branches/[0-9_]+$"));
+
+    return branches.indexOf(checkedVersion) == branches.length() - 1;
+}
+
 QStringList SvnUtils::processSvnPath(const QStringList& parts, const int deep)
 {
     QStringList basePath;
