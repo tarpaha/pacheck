@@ -35,7 +35,10 @@ private:
 private:
     QString _name;
     QString _basePath;
+private:
     QString _currentVersion;
+    QString _selectedVersion;
+    QString _bestVersion;
 
 private:
     int _folderContentCallsLeft;
@@ -52,11 +55,15 @@ private:
     QStringList     _versions;
 
 private:
+    void updateNameWidget();
     void showVersions();
 
 private slots:
     void onGetBaseFoldersSucceeded(const QString& data, const QVariant&);
     void onGetFolderContentSucceeded(const QString &data, const QVariant&);
+
+private slots:
+    void currentVersionIndexChanged(int index);
 
 public:
     static bool lessThan(Package *p1, Package *p2);

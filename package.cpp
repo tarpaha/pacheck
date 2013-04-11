@@ -24,8 +24,10 @@ Package::Package(QWidget* parent, const QString& url) :
     _name           = parts[1];
     _currentVersion = parts[2];
 
+    _selectedVersion = _bestVersion = _currentVersion;
+
     _nameWidget = new QLabel(parent);
-    _nameWidget->setText(" " + _name);
+    updateNameWidget();
 
     _nameWidget->setStyleSheet(Utils::bcStyleSheet(_nameWidget, COLOR_PROGRESS));
 
@@ -37,7 +39,7 @@ Package::Package(QWidget* parent, const QString& url) :
 
     _versionsWidget = new QComboBox(parent);
     _versionsWidget->setStyleSheet(Utils::bcStyleSheet(_versionsWidget, COLOR_PROGRESS));
-    _versionsWidget->setFrame(false);
+    _versionsWidget->setFrame(false);    
 
     _versionsControlWidget->addWidget(_versionsWidget);
     _versionsControlWidget->addWidget(progressLabel);
@@ -102,11 +104,15 @@ void Package::showVersions()
 
     _versionsWidget->clear();
     _versionsWidget->addItems(_versions);
-
     _versionsWidget->setCurrentText(_currentVersion);
 
-    const QString latestBranch = SvnUtils::getLatestBranch(_versions);
-    if((latestBranch != 0) && (latestBranch == _currentVersion))
+    _selectedVersion = _currentVersion;
+    _bestVersion = SvnUtils::getLatestBranch(_versions);
+
+    _versionsWidget->setItemData(_versions.indexOf(_currentVersion), QColor(COLOR_BAD), Qt::BackgroundColorRole);
+    _versionsWidget->setItemData(_versions.indexOf(_bestVersion), QColor(COLOR_GOOD), Qt::BackgroundColorRole);
+
+    if(_currentVersion == _bestVersion)
     {
         _nameWidget->setStyleSheet(Utils::bcStyleSheet(_nameWidget, COLOR_GOOD));
         _versionsWidget->setStyleSheet(Utils::bcStyleSheet(_versionsWidget, COLOR_GOOD));
@@ -115,14 +121,42 @@ void Package::showVersions()
     {
         _nameWidget->setStyleSheet(Utils::bcStyleSheet(_nameWidget, COLOR_BAD));
         _versionsWidget->setStyleSheet(Utils::bcStyleSheet(_versionsWidget, COLOR_BAD));
-
-        _versionsWidget->setItemData(_versions.indexOf(_currentVersion), QColor("MistyRose"), Qt::BackgroundColorRole);
-        _versionsWidget->setItemData(_versions.indexOf(latestBranch), QColor("GreenYellow"), Qt::BackgroundColorRole);
     }
 
     _versionsControlWidget->setCurrentWidget(_versionsWidget);
 
+    QObject::connect(_versionsWidget, SIGNAL(currentIndexChanged(int)), this, SLOT(currentVersionIndexChanged(int)));
+
     emit versionsReceived();
+}
+
+void Package::updateNameWidget()
+{
+    if(_selectedVersion != _currentVersion)
+    {
+        _nameWidget->setText(" <b><i> " + _name + "</i></b>");
+    }
+    else
+    {
+        _nameWidget->setText(" " + _name);
+    }
+}
+
+void Package::currentVersionIndexChanged(int index)
+{
+    _selectedVersion = _versions.at(index);
+    updateNameWidget();
+
+    if(_selectedVersion == _bestVersion)
+    {
+        _nameWidget->setStyleSheet(Utils::bcStyleSheet(_nameWidget, COLOR_GOOD));
+        _versionsWidget->setStyleSheet(Utils::bcStyleSheet(_versionsWidget, COLOR_GOOD));
+    }
+    else
+    {
+        _nameWidget->setStyleSheet(Utils::bcStyleSheet(_nameWidget, COLOR_BAD));
+        _versionsWidget->setStyleSheet(Utils::bcStyleSheet(_versionsWidget, COLOR_BAD));
+    }
 }
 
 void Package::addVersion(const QString &version)
@@ -134,4 +168,3 @@ bool Package::lessThan(Package* p1, Package* p2)
 {
     return p1->_name.compare(p2->_name) < 0;
 }
-
