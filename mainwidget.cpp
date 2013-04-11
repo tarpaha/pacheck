@@ -135,11 +135,13 @@ void MainWidget::applyPackagesToTable()
 void MainWidget::onVersionsReceived()
 {
     setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
+    onVersionChanged();
 }
 
 void MainWidget::onVersionChanged()
 {
-    ui->applyChangesButton->setEnabled(anyPackageVersionChanged());
+    bool gettingVesions = (qobject_cast<State_GetVersions*>(_currentState) != 0);
+    ui->applyChangesButton->setEnabled(!gettingVesions && anyPackageVersionChanged());
 }
 
 bool MainWidget::anyPackageVersionChanged()
