@@ -48,6 +48,7 @@ private:
 
 private slots:
     void onVersionsReceived();
+    void onVersionChanged();
 
 private:
     Ui::MainWidget* ui;
@@ -55,6 +56,8 @@ private:
     QString         _packagesFolder;
     QList<Package*> _packages;
 
+private:
+    bool anyPackageVersionChanged();
 };
 
 #endif // MAINWIDGET_H

@@ -13,7 +13,7 @@ class Package : public QObject
     Q_OBJECT
 
 public:
-    Package(QWidget* parent, const QString& url);
+    Package(QWidget* parent, const QString& url, const char* onVersionChanged);
 
 public:
     const QString& name() const { return _name; }
@@ -25,6 +25,7 @@ public:
 
 public:
     void getVersions(QObject *sender, const char* onVesionsReceived);
+    bool versionChanged() const { return _currentVersion != _selectedVersion; }
 
 public:
     operator QString();
@@ -35,6 +36,7 @@ private:
 private:
     QString _name;
     QString _basePath;
+    const char* _onVersionChanged;
 private:
     QString _currentVersion;
     QString _selectedVersion;

@@ -110,7 +110,7 @@ void MainWidget::fillPackagesList(const QStringList& packagesList)
     _packages.clear();
     foreach(QString packageUrl, packagesList)
     {
-        _packages.append(new Package(this, packageUrl));
+        _packages.append(new Package(this, packageUrl, SLOT(onVersionChanged())));
     }
     qSort(_packages.begin(), _packages.end(), Package::lessThan);
 }
@@ -135,4 +135,19 @@ void MainWidget::applyPackagesToTable()
 void MainWidget::onVersionsReceived()
 {
     setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
+}
+
+void MainWidget::onVersionChanged()
+{
+    ui->applyChangesButton->setEnabled(anyPackageVersionChanged());
+}
+
+bool MainWidget::anyPackageVersionChanged()
+{
+    foreach(Package* package, _packages)
+    {
+        if(package->versionChanged())
+            return true;
+    }
+    return false;
 }

@@ -15,8 +15,9 @@ static const char* COLOR_PROGRESS = "Lavender";
 static const char* COLOR_GOOD     = "PaleGreen";
 static const char* COLOR_BAD      = "LightSalmon";
 
-Package::Package(QWidget* parent, const QString& url) :
-    QObject(parent)
+Package::Package(QWidget* parent, const QString& url, const char *onVersionChanged) :
+    QObject(parent),
+    _onVersionChanged(onVersionChanged)
 {
     QStringList parts = SvnUtils::splitSvnPath(url);
 
@@ -126,6 +127,7 @@ void Package::showVersions()
     _versionsControlWidget->setCurrentWidget(_versionsWidget);
 
     QObject::connect(_versionsWidget, SIGNAL(currentIndexChanged(int)), this, SLOT(currentVersionIndexChanged(int)));
+    QObject::connect(_versionsWidget, SIGNAL(currentIndexChanged(int)), parent(), _onVersionChanged);
 
     emit versionsReceived();
 }
