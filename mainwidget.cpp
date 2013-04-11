@@ -79,7 +79,7 @@ void MainWidget::onSvnAbsent()
 
 void MainWidget::onFolderSelected()
 {
-    _packagesFolder = static_cast<State_GetPackagesFolder*>(_currentState)->packagesFolder();
+    _packagesFolder = qobject_cast<State_GetPackagesFolder*>(_currentState)->packagesFolder();
     setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
 }
 
@@ -95,7 +95,7 @@ void MainWidget::OnPackagesListReceived()
 {
     _settings.setPackagesFolder(_packagesFolder);
 
-    const QString& packagesListString = static_cast<State_GetPackagesList*>(_currentState)->packagesList();
+    const QString& packagesListString = qobject_cast<State_GetPackagesList*>(_currentState)->packagesList();
 
     fillPackagesList(SvnUtils::splitPackagesList(packagesListString));
     applyPackagesToTable();
