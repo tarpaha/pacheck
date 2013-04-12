@@ -26,6 +26,9 @@ MainWidget::MainWidget(QWidget* parent) :
 
     ui->selectFolderButton->setEnabled(false);
 
+    ui->applyChangesButton->setEnabled(false);
+    QObject::connect(ui->applyChangesButton, SIGNAL(clicked()), this, SLOT(onApplyButtonPressed()));
+
     setState(new State_SvnCheck(this), &MainWidget::onSvnPresent, &MainWidget::onSvnAbsent);
 }
 
@@ -111,6 +114,7 @@ void MainWidget::fillPackagesList(const QStringList& packagesList)
     foreach(QString packageUrl, packagesList)
     {
         _packages.append(new Package(this, packageUrl, SLOT(onVersionChanged())));
+        break;
     }
     qSort(_packages.begin(), _packages.end(), Package::lessThan);
 }
@@ -152,4 +156,12 @@ bool MainWidget::anyPackageVersionChanged()
             return true;
     }
     return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainWidget::onApplyButtonPressed()
+{
+    qDebug() << "a";
 }

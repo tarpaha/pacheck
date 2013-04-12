@@ -58,6 +58,9 @@ private:
 
 private:
     bool anyPackageVersionChanged();
+
+private slots:
+    void onApplyButtonPressed();
 };
 
 #endif // MAINWIDGET_H
