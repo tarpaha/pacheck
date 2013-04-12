@@ -163,10 +163,11 @@ bool MainWidget::anyPackageVersionChanged()
 
 void MainWidget::onApplyButtonPressed()
 {
-    setState(new State_ApplyChanges(this, _packages), &MainWidget::onChangesApplied, 0);
+    ui->applyChangesButton->setEnabled(false);
+    setState(new State_ApplyChanges(this, _packages, _packagesFolder), &MainWidget::onChangesApplied, 0);
 }
 
 void MainWidget::onChangesApplied()
 {
-    qDebug() << "trololo";
+    setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
 }
