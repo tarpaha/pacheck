@@ -42,3 +42,8 @@ HEADERS  += mainwidget.h \
     state_applychanges.h
 
 FORMS    += mainwidget.ui
+
+RC_FILE = pacheck.rc
+
+OTHER_FILES += \
+    pacheck.rc
