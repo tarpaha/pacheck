@@ -21,7 +21,12 @@ QStringList SvnUtils::splitPackagesList(const QString &packagesList)
     foreach(QString packageLine, packageLines)
     {
         QStringList parts = packageLine.split(' ');
-        result.append(parts[0]);
+
+        QString* packageUrl = &parts[0];
+        if(!packageUrl->startsWith("https"))
+            packageUrl = &parts[1];
+
+        result.append(*packageUrl);
     }
 
     return result;
