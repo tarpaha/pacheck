@@ -10,6 +10,7 @@
 #include "state_getpackagesfolder.h"
 #include "state_getpackageslist.h"
 #include "state_getversions.h"
+#include "state_applychanges.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -114,7 +115,6 @@ void MainWidget::fillPackagesList(const QStringList& packagesList)
     foreach(QString packageUrl, packagesList)
     {
         _packages.append(new Package(this, packageUrl, SLOT(onVersionChanged())));
-        break;
     }
     qSort(_packages.begin(), _packages.end(), Package::lessThan);
 }
@@ -163,5 +163,10 @@ bool MainWidget::anyPackageVersionChanged()
 
 void MainWidget::onApplyButtonPressed()
 {
-    qDebug() << "a";
+    setState(new State_ApplyChanges(this, _packages), &MainWidget::onChangesApplied, 0);
+}
+
+void MainWidget::onChangesApplied()
+{
+    qDebug() << "trololo";
 }

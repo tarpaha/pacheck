@@ -48,6 +48,11 @@ Package::Package(QWidget* parent, const QString& url, const char *onVersionChang
     _versionsControlWidget->setCurrentWidget(progressLabel);
 }
 
+QString Package::selectedPath() const
+{
+    return _basePath + "/" + _selectedVersion;
+}
+
 Package::operator QString()
 {
     return QString("name = %1, path = %2, version = %3").arg(_name, _basePath, _currentVersion);

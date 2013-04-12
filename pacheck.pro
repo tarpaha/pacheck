@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     state_getpackagesfolder.cpp \
     state_getpackageslist.cpp \
     state_getversions.cpp \
-    utils.cpp
+    utils.cpp \
+    state_applychanges.cpp
 
 HEADERS  += mainwidget.h \
     process.h \
@@ -37,6 +38,7 @@ HEADERS  += mainwidget.h \
     state_getpackagesfolder.h \
     state_getpackageslist.h \
     state_getversions.h \
-    utils.h
+    utils.h \
+    state_applychanges.h
 
 FORMS    += mainwidget.ui

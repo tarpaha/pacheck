@@ -20,6 +20,9 @@ public:
     const QString& version()  const { return _currentVersion; }
 
 public:
+    QString selectedPath() const;
+
+public:
     QWidget* getNameWidget()       { return _nameWidget; }
     QWidget* getVersionsWidget()   { return _versionsControlWidget; }
 

@@ -61,6 +61,7 @@ private:
 
 private slots:
     void onApplyButtonPressed();
+    void onChangesApplied();
 };
 
 #endif // MAINWIDGET_H
