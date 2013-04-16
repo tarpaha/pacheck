@@ -105,7 +105,7 @@ void MainWidget::OnPackagesListReceived()
 
     setWindowTitle(_packagesFolder);
 
-    setState(new State_GetVersions(this, _packages), &MainWidget::onVersionsReceived, 0);
+    setState(new State_GetVersions(this, _packages), &MainWidget::onVersionsReceived, &MainWidget::onVersionsReceiveError);
 }
 
 void MainWidget::fillPackagesList(const QStringList& packagesList)
@@ -140,6 +140,14 @@ void MainWidget::onVersionsReceived()
     setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
     onVersionChanged();
 }
+
+void MainWidget::onVersionsReceiveError()
+{
+    setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MainWidget::onVersionChanged()
 {

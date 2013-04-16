@@ -48,6 +48,9 @@ private:
 
 private slots:
     void onVersionsReceived();
+    void onVersionsReceiveError();
+
+private slots:
     void onVersionChanged();
 
 private:

@@ -20,6 +20,7 @@ private:
 
 private slots:
     void onVersionsReceived();
+    void onError(const QString& errorString);
     
 };
 

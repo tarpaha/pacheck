@@ -58,10 +58,11 @@ Package::operator QString()
     return QString("name = %1, path = %2, version = %3").arg(_name, _basePath, _currentVersion);
 }
 
-void Package::getVersions(QObject* sender, const char* onVersionsReceived)
+void Package::getVersions(QObject* sender, const char* onVersionsReceived, const char* onError)
 {
     QObject::connect(this, SIGNAL(versionsReceived()), sender, onVersionsReceived);
-    Process::run(this, "svn list " + _basePath, 0, PROCESS_SLOT(onGetBaseFoldersSucceeded), 0);
+    QObject::connect(this, SIGNAL(errorOccured(const QString&)), sender, onError);
+    Process::run(this, "svn list " + _basePath, 0, PROCESS_SLOT(onGetBaseFoldersSucceeded), PROCESS_SLOT(onSvnError));
 }
 
 void Package::onGetBaseFoldersSucceeded(const QString& data, const QVariant&)
@@ -102,6 +103,11 @@ void Package::onGetFolderContentSucceeded(const QString& str, const QVariant &da
     {
         showVersions();
     }
+}
+
+void Package::onSvnError(const QString &errorString, const QVariant &)
+{
+    emit errorOccured(errorString);
 }
 
 void Package::showVersions()

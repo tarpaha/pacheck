@@ -27,7 +27,7 @@ public:
     QWidget* getVersionsWidget()   { return _versionsControlWidget; }
 
 public:
-    void getVersions(QObject *sender, const char* onVesionsReceived);
+    void getVersions(QObject *sender, const char* onVesionsReceived, const char *onError);
     bool versionChanged() const { return _currentVersion != _selectedVersion; }
 
 public:
@@ -55,6 +55,7 @@ private:
 
 signals:
     void versionsReceived();
+    void errorOccured(const QString&);
 
 private:
     QStringList     _versions;
@@ -66,6 +67,7 @@ private:
 private slots:
     void onGetBaseFoldersSucceeded(const QString& data, const QVariant&);
     void onGetFolderContentSucceeded(const QString &data, const QVariant&);
+    void onSvnError(const QString& errorString, const QVariant&);
 
 private slots:
     void currentVersionIndexChanged(int index);
