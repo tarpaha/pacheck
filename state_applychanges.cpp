@@ -1,10 +1,10 @@
 #include "state_applychanges.h"
 #include "package.h"
 #include "process.h"
+#include "utils.h"
 
 #include <QDebug>
 #include <QTextStream>
-#include <QMessageBox>
 
 State_ApplyChanges::State_ApplyChanges(MainWidget* widget, const QList<Package *>& packages, const QString& packagesFolder) :
     State_Widget(widget),
@@ -50,11 +50,7 @@ void State_ApplyChanges::onPropSetSucceeded(const QString&, const QVariant&)
 
 void State_ApplyChanges::onPropSetFailed(const QString& errorString, const QVariant&)
 {
-    QMessageBox msgBox;
-    msgBox.setText(QString("Error running \"svn propset svn:externals\" command.\nError string: %1").arg(errorString));
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.exec();
-
+    Utils::msgBox(QString("Error running \"svn propset svn:externals\" command.\nError string: %1").arg(errorString));
     fail();
 }
 

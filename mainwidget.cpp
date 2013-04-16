@@ -13,7 +13,6 @@
 #include "state_applychanges.h"
 
 #include <QDebug>
-#include <QMessageBox>
 #include <QFileDialog>
 
 MainWidget::MainWidget(QWidget* parent) :
