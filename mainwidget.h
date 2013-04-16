@@ -36,6 +36,8 @@ private slots:
     void onSvnPresent();
     void onSvnAbsent();
 
+private:
+    void getPackagesList();
 private slots:
     void OnPackagesListReceived();
     void OnPackagesListFailed();

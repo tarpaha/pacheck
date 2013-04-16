@@ -64,7 +64,7 @@ void MainWidget::onSvnPresent()
     _packagesFolder = _settings.getPackagesFolder();
     if(_packagesFolder != 0)
     {
-        setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
+        getPackagesList();
     }
     else
     {
@@ -83,11 +83,18 @@ void MainWidget::onSvnAbsent()
 void MainWidget::onFolderSelected()
 {
     _packagesFolder = qobject_cast<State_GetPackagesFolder*>(_currentState)->packagesFolder();
-    setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
+    getPackagesList();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainWidget::getPackagesList()
+{
+    setState(new State_GetPackagesList(this, _packagesFolder),
+             &MainWidget::OnPackagesListReceived,
+             &MainWidget::OnPackagesListFailed);
+}
 
 void MainWidget::OnPackagesListFailed()
 {
@@ -143,7 +150,7 @@ void MainWidget::onVersionsReceived()
 
 void MainWidget::onVersionsReceiveError()
 {
-    setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
+    getPackagesList();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,5 +183,5 @@ void MainWidget::onApplyButtonPressed()
 
 void MainWidget::onChangesApplied()
 {
-    setState(new State_GetPackagesList(this, _packagesFolder), &MainWidget::OnPackagesListReceived, &MainWidget::OnPackagesListFailed);
+    getPackagesList();
 }
