@@ -42,6 +42,8 @@ private slots:
     void OnPackagesListReceived();
     void OnPackagesListFailed();
 
+private:
+    void getPackagesFolder();
 private slots:
     void onFolderSelected();
 private:

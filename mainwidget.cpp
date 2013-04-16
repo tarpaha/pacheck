@@ -68,7 +68,7 @@ void MainWidget::onSvnPresent()
     }
     else
     {
-        setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
+        getPackagesFolder();
     }
 }
 
@@ -79,6 +79,11 @@ void MainWidget::onSvnAbsent()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainWidget::getPackagesFolder()
+{
+    setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
+}
 
 void MainWidget::onFolderSelected()
 {
@@ -98,7 +103,7 @@ void MainWidget::getPackagesList()
 
 void MainWidget::OnPackagesListFailed()
 {
-    setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
+    getPackagesFolder();
 }
 
 void MainWidget::OnPackagesListReceived()
@@ -144,13 +149,13 @@ void MainWidget::applyPackagesToTable()
 
 void MainWidget::onVersionsReceived()
 {
-    setState(new State_GetPackagesFolder(this, _packagesFolder), &MainWidget::onFolderSelected, 0);
+    getPackagesFolder();
     onVersionChanged();
 }
 
 void MainWidget::onVersionsReceiveError()
 {
-    getPackagesList();
+    getPackagesFolder();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
