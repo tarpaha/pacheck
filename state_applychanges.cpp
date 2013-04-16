@@ -53,4 +53,3 @@ void State_ApplyChanges::onPropSetFailed(const QString& errorString, const QVari
     Utils::msgBox(QString("Error running \"svn propset svn:externals\" command.\nError string: %1").arg(errorString));
     fail();
 }
-

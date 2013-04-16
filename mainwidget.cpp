@@ -183,10 +183,15 @@ bool MainWidget::anyPackageVersionChanged()
 void MainWidget::onApplyButtonPressed()
 {
     ui->applyChangesButton->setEnabled(false);
-    setState(new State_ApplyChanges(this, _packages, _packagesFolder), &MainWidget::onChangesApplied, 0);
+    setState(new State_ApplyChanges(this, _packages, _packagesFolder), &MainWidget::onChangesApplied, &MainWidget::onChangesFailed);
 }
 
 void MainWidget::onChangesApplied()
+{
+    getPackagesList();
+}
+
+void MainWidget::onChangesFailed()
 {
     getPackagesList();
 }
