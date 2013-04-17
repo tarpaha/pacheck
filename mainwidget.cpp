@@ -191,8 +191,8 @@ void MainWidget::onChangesApplied()
 {
     QString comments = qobject_cast<State_ApplyChanges*>(_currentState)->getComments();
 
-    CommentsWidget commentsWidget(this, comments);
-    commentsWidget.exec();
+    CommentsWidget* commentsWidget = new CommentsWidget(this, comments);
+    commentsWidget->show();
 
     getPackagesList();
 }
