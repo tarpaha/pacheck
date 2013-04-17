@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     state_getpackageslist.cpp \
     state_getversions.cpp \
     utils.cpp \
-    state_applychanges.cpp
+    state_applychanges.cpp \
+    commentswidget.cpp
 
 HEADERS  += mainwidget.h \
     process.h \
@@ -39,9 +40,11 @@ HEADERS  += mainwidget.h \
     state_getpackageslist.h \
     state_getversions.h \
     utils.h \
-    state_applychanges.h
+    state_applychanges.h \
+    commentswidget.h
 
-FORMS    += mainwidget.ui
+FORMS    += mainwidget.ui \
+    commentswidget.ui
 
 RC_FILE = pacheck.rc
 
