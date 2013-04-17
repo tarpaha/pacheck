@@ -17,6 +17,9 @@ public:
     
 private:
     Ui::CommentsWidget *ui;
+
+private slots:
+    void copyAndClose();
 };
 
 #endif // COMMENTSWIDGET_H
