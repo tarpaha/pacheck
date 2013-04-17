@@ -12,7 +12,7 @@ class CommentsWidget : public QDialog
     Q_OBJECT
     
 public:
-    explicit CommentsWidget(QWidget *parent = 0);
+    explicit CommentsWidget(QWidget *parent, const QString& comments);
     ~CommentsWidget();
     
 private:

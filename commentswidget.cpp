@@ -3,13 +3,13 @@
 
 #include <QClipboard>
 
-CommentsWidget::CommentsWidget(QWidget *parent) :
+CommentsWidget::CommentsWidget(QWidget *parent, const QString& comments) :
     QDialog(parent),
     ui(new Ui::CommentsWidget)
 {
     ui->setupUi(this);
 
-    ui->commentsTextEdit->setText("Olala");
+    ui->commentsTextEdit->setPlainText(comments);
 
     QObject::connect(ui->copyAndCloseButton, SIGNAL(clicked()), this, SLOT(copyAndClose()));
     QObject::connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(close()));
@@ -22,6 +22,6 @@ CommentsWidget::~CommentsWidget()
 
 void CommentsWidget::copyAndClose()
 {
-    //QApplication::clipboard()->setText(ui->commentsTextEdit->pla
+    QApplication::clipboard()->setText(ui->commentsTextEdit->toPlainText());
     close();
 }
