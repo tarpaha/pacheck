@@ -20,6 +20,9 @@ public:
     const QString& version()  const { return _currentVersion; }
 
 public:
+    const QString& selectedVersion()  const { return _selectedVersion; }
+
+public:
     QString selectedPath() const;
 
 public:

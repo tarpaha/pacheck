@@ -11,6 +11,7 @@
 #include "state_getpackageslist.h"
 #include "state_getversions.h"
 #include "state_applychanges.h"
+#include "commentswidget.h"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -188,6 +189,11 @@ void MainWidget::onApplyButtonPressed()
 
 void MainWidget::onChangesApplied()
 {
+    QString comments = qobject_cast<State_ApplyChanges*>(_currentState)->getComments();
+
+    CommentsWidget commentsWidget(this, comments);
+    commentsWidget.exec();
+
     getPackagesList();
 }
 

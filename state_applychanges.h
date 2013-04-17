@@ -4,6 +4,7 @@
 #include "state_widget.h"
 
 #include <QTemporaryFile>
+#include <QStringList>
 
 class Package;
 
@@ -16,10 +17,14 @@ public:
 public:
     virtual void start();
 
+public:
+    QString getComments() const;
+
 private:
     const QList<Package*>   _packages;
     const QString&          _packagesFolder;
     QTemporaryFile          _file;
+    QStringList             _comments;
 
 private:
     QString prepareFile();

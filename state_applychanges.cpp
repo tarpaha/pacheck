@@ -25,17 +25,32 @@ void State_ApplyChanges::start()
                 PROCESS_SLOT(onPropSetFailed));
 }
 
+QString State_ApplyChanges::getComments() const
+{
+    return _comments.join("\n");
+}
+
 QString State_ApplyChanges::prepareFile()
 {
     // todo: error reaction here
     if(_file.open())
     {
-        qDebug() << _file.fileName();
+        _comments.clear();
 
         QTextStream s_out(&_file);
         foreach(Package* package, _packages)
         {
             s_out << package->selectedPath() << " " << package->name() << "\n";
+
+            if(package->version() != package->selectedVersion())
+            {
+                QString commentString = QString("%1 version was changed from %2 to %3").arg(
+                            package->name(),
+                            package->version(),
+                            package->selectedVersion());
+
+                _comments.append(commentString);
+            }
         }
 
         _file.close();
