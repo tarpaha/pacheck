@@ -10,22 +10,26 @@ class QSettings;
 class Settings
 {
 public:
-    Settings(MainWidget* mainWidget);
+    static void Init(const QString& organization, const QString& application);
 
 public:
-    void loadUI();
-    void saveUI();
+    static void loadUI(MainWidget* mainWidget);
+    static void saveUI(MainWidget* mainWidget);
 
 public:
-    void saveWidgetAppearance(const QWidget *widget, const QString& groupName);
-    void loadWidgetAppearance(QWidget *widget, const QString& groupName, const QPoint &defaultPos, const QSize &defaultSize);
+    static void saveWidgetAppearance(const QWidget *widget, const QString& groupName);
+    static void loadWidgetAppearance(QWidget *widget, const QString& groupName, const QPoint &defaultPos, const QSize &defaultSize);
 
 public:
-    QString getPackagesFolder() const;
-    void setPackagesFolder(const QString& folder);
+    static QString getPackagesFolder();
+    static void setPackagesFolder(const QString& folder);
 
 private:
-    MainWidget* _mainWidget;
+    Settings(const QString& organization, const QString& application);
+
+private:
+    static Settings* _instance;
+private:
     QSettings   _settings;
 
 };

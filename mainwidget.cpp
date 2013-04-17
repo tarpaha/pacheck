@@ -18,12 +18,12 @@
 
 MainWidget::MainWidget(QWidget* parent) :
     QWidget(parent),
-    ui(new Ui::MainWidget),
-    _settings(this)
+    ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
 
-    _settings.loadUI();    
+    Settings::Init("tarpaha", "pacheck");
+    Settings::loadUI(this);
 
     ui->selectFolderButton->setEnabled(false);
 
@@ -40,7 +40,7 @@ MainWidget::~MainWidget()
 
 void MainWidget::closeEvent(QCloseEvent* event)
 {
-    _settings.saveUI();
+    Settings::saveUI(this);;
     QWidget::closeEvent(event);
 }
 
@@ -62,7 +62,7 @@ void MainWidget::setState(State* state, void (MainWidget::* onSucceeded)(), void
 
 void MainWidget::onSvnPresent()
 {
-    _packagesFolder = _settings.getPackagesFolder();
+    _packagesFolder = Settings::getPackagesFolder();
     if(_packagesFolder != 0)
     {
         getPackagesList();
@@ -109,7 +109,7 @@ void MainWidget::OnPackagesListFailed()
 
 void MainWidget::OnPackagesListReceived()
 {
-    _settings.setPackagesFolder(_packagesFolder);
+    Settings::setPackagesFolder(_packagesFolder);
 
     const QString& packagesListString = qobject_cast<State_GetPackagesList*>(_currentState)->packagesList();
 

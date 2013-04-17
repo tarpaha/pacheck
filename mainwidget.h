@@ -1,8 +1,6 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include "settings.h"
-
 #include <QWidget>
 
 namespace Ui {
@@ -59,7 +57,6 @@ private slots:
 
 private:
     Ui::MainWidget* ui;
-    Settings        _settings;
     QString         _packagesFolder;
     QList<Package*> _packages;
 
