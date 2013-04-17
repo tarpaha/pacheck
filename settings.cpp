@@ -15,12 +15,7 @@ Settings::Settings(MainWidget *mainWidget) :
 
 void Settings::loadUI()
 {
-    _settings.beginGroup("main_widget");
-    {
-        _mainWidget->resize(_settings.value("size", WINDOW_DEFAULT_SIZE).toSize());
-        _mainWidget->move(_settings.value("pos", WINDOW_DEFAULT_POSITION).toPoint());
-    }
-    _settings.endGroup();
+    loadWidgetAppearance(_mainWidget, "main_widget", WINDOW_DEFAULT_POSITION, WINDOW_DEFAULT_SIZE);
 
     _settings.beginGroup("table");
     {
@@ -31,16 +26,31 @@ void Settings::loadUI()
 
 void Settings::saveUI()
 {
-    _settings.beginGroup("main_widget");
-    {
-        _settings.setValue("size", _mainWidget->size());
-        _settings.setValue("pos", _mainWidget->pos());
-    }
-    _settings.endGroup();
+    saveWidgetAppearance(_mainWidget, "main_widget");
 
     _settings.beginGroup("table");
     {
         _settings.setValue("first_column_width", _mainWidget->ui->table->columnWidth(0));
+    }
+    _settings.endGroup();
+}
+
+void Settings::saveWidgetAppearance(const QWidget* widget, const QString& groupName)
+{
+    _settings.beginGroup(groupName);
+    {
+        _settings.setValue("size", widget->size());
+        _settings.setValue("pos", widget->pos());
+    }
+    _settings.endGroup();
+}
+
+void Settings::loadWidgetAppearance(QWidget *widget, const QString &groupName, const QPoint& defaultPos, const QSize& defaultSize)
+{
+    _settings.beginGroup(groupName);
+    {
+        widget->resize(_settings.value("size", defaultSize).toSize());
+        widget->move(_settings.value("pos", defaultPos).toPoint());
     }
     _settings.endGroup();
 }
