@@ -12,3 +12,8 @@ Program stores packages alphabetically so at first commit order of packages can 
 
 ### Screenshot
 ![Program interface](https://github.com/tarpaha/pacheck/blob/master/doc/images/pacheck.png?raw=true)
+
+### Download
+
+Compiled sources for win/ios can be found at SourceForge:
+https://sourceforge.net/projects/pacheck/files/
