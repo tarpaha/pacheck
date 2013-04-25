@@ -1,4 +1,5 @@
 #include "svnutils.h"
+#include "utils.h"
 
 static const char* TRUNK = "trunk";
 static const char* SEPARATOR = "/";
@@ -21,6 +22,15 @@ QStringList SvnUtils::splitPackagesList(const QString &packagesList)
     foreach(QString packageLine, packageLines)
     {
         QStringList parts = packageLine.split(' ');
+
+        if(parts.length() != 2)
+        {
+            Utils::msgBox(QString("\
+Cannot resolve package definition \"%1\", skipping.\n\n\
+WARNING!\n\n\
+Do not apply changes because this package will be removed from svn:externals").arg(packageLine));
+            continue;
+        }
 
         QString* packageUrl = &parts[0];
         if(!packageUrl->startsWith("https"))
